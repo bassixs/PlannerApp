@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Планировщик</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/webapp/style.css"> <!-- Обновлен путь -->
     <!-- Подключаем Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -28,14 +28,14 @@
     </div>
     <div id="modal" class="modal"></div>
 
-    <script src="storage.js"></script>
-    <script src="tasks.js"></script>
-    <script src="habits.js"></script>
-    <script src="goals.js"></script>
-    <script src="calendar.js"></script>
-    <script src="modal.js"></script>
-    <script src="notifications.js"></script>
-    <script src="tabs.js"></script>
+    <script src="/webapp/scripts/storage.js"></script> <!-- Обновлены пути -->
+    <script src="/webapp/scripts/tasks.js"></script>
+    <script src="/webapp/scripts/habits.js"></script>
+    <script src="/webapp/scripts/goals.js"></script>
+    <script src="/webapp/scripts/calendar.js"></script>
+    <script src="/webapp/scripts/modal.js"></script>
+    <script src="/webapp/scripts/notifications.js"></script>
+    <script src="/webapp/scripts/tabs.js"></script>
     <script>
         window.onload = () => {
             if (window.Telegram?.WebApp) {

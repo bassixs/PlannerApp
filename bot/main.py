@@ -1,6 +1,6 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import Application, CommandHandler, CallbackContext
-from config import BOT_TOKEN, APP_URL
+from bot.config import BOT_TOKEN, APP_URL  # Изменен путь импорта
 
 async def start(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
