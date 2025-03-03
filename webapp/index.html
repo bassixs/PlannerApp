@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планировщик</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Подключаем Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="tabs">
+                <button class="tab active" data-tab="tasks"><i class="fas fa-tasks"></i></button>
+                <button class="tab" data-tab="habits"><i class="fas fa-recycle"></i></button>
+                <button class="tab" data-tab="goals"><i class="fas fa-bullseye"></i></button>
+                <button class="tab" data-tab="calendar"><i class="fas fa-calendar-alt"></i></button>
+            </div>
+        </div>
+        <div class="content">
+            <div id="tasks" class="tab-content active"></div>
+            <div id="habits" class="tab-content"></div>
+            <div id="goals" class="tab-content"></div>
+            <div id="calendar" class="tab-content"></div>
+        </div>
+    </div>
+    <div id="modal" class="modal"></div>
+
+    <script src="storage.js"></script>
+    <script src="tasks.js"></script>
+    <script src="habits.js"></script>
+    <script src="goals.js"></script>
+    <script src="calendar.js"></script>
+    <script src="modal.js"></script>
+    <script src="notifications.js"></script>
+    <script src="tabs.js"></script>
+    <script>
+        window.onload = () => {
+            if (window.Telegram?.WebApp) {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+                console.log('Telegram Web App инициализирован');
+                Telegram.WebApp.MainButton.hide();
+            } else {
+                console.log('Запуск вне Telegram');
+            }
+
+            try {
+                taskManager.render();
+                habitManager.render();
+                goalManager.render();
+                calendar.render();
+            } catch (e) {
+                console.error('Ошибка инициализации менеджеров:', e);
+            }
+        };
+    </script>
+</body>
+</html>
