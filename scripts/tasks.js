@@ -49,7 +49,7 @@ class TaskManager {
         console.log('Rendering tasks:', this.tasks);
         container.innerHTML = `
             <button class="add-task-btn" id="add-task-btn">Добавить задачу</button>
-            ${this.tasks.map(task => `
+            ${Array.isArray(this.tasks) ? this.tasks.map(task => `
                 <div class="card task-card" data-id="${task.id}">
                     <input type="checkbox" 
                         ${task.completed ? 'checked' : ''} 
@@ -60,12 +60,12 @@ class TaskManager {
                         <span>Приоритет: ${this.translatePriority(task.priority)}</span>
                         ${task.taskDescription ? `<p>Описание: ${task.taskDescription}</p>` : ''}
                         ${task.status ? `<p>Статус: ${this.translateStatus(task.status)}</p>` : ''}
-                        ${task.assignee ? `<p>Исполнитель: ${task.assignee}</p>` : ''}
+                        ${task.assignee ? `<p>Исполнитель: ${task.assignee}</p>` : '' }
                         ${task.location ? `<p>Площадка: ${task.location}</p>` : ''}
                         ${task.tags.length ? `<p>Метки: ${task.tags.join(', ')}</p>` : ''}
                     </div>
                 </div>
-            `).join('') || ''}
+            `).join('') : '<p>Нет задач для отображения</p>'}
         `;
         this.bindEvents();
     }
