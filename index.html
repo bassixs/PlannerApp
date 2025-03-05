@@ -27,14 +27,14 @@
     </div>
     <div id="modal" class="modal"></div>
 
-    <script src="/PlannerApp/scripts/storage.js"></script>
-    <script src="/PlannerApp/scripts/tasks.js"></script>
-    <script src="/PlannerApp/scripts/habits.js"></script>
-    <script src="/PlannerApp/scripts/goals.js"></script>
-    <script src="/PlannerApp/scripts/calendar.js"></script>
-    <script src="/PlannerApp/scripts/modal.js"></script>
-    <script src="/PlannerApp/scripts/notifications.js"></script>
-    <script src="/PlannerApp/scripts/tabs.js"></script>
+    <script src="/PlannerApp/scripts/storage.js" defer></script>
+    <script src="/PlannerApp/scripts/tasks.js" defer></script>
+    <script src="/PlannerApp/scripts/habits.js" defer></script>
+    <script src="/PlannerApp/scripts/goals.js" defer></script>
+    <script src="/PlannerApp/scripts/calendar.js" defer></script>
+    <script src="/PlannerApp/scripts/modal.js" defer></script>
+    <script src="/PlannerApp/scripts/notifications.js" defer></script>
+    <script src="/PlannerApp/scripts/tabs.js" defer></script>
     <script>
         window.onload = () => {
             if (window.Telegram?.WebApp) {
@@ -47,10 +47,19 @@
             }
 
             try {
-                taskManager.render();
-                habitManager.render();
-                goalManager.render();
-                calendar.render();
+                // Проверка существования объектов перед вызовом
+                if (typeof taskManager !== 'undefined' && taskManager.render) {
+                    taskManager.render();
+                }
+                if (typeof habitManager !== 'undefined' && habitManager.render) {
+                    habitManager.render();
+                }
+                if (typeof goalManager !== 'undefined' && goalManager.render) {
+                    goalManager.render();
+                }
+                if (typeof calendar !== 'undefined' && calendar.render) {
+                    calendar.render();
+                }
             } catch (e) {
                 console.error('Ошибка инициализации менеджеров:', e);
             }
