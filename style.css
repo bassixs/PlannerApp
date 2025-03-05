@@ -51,7 +51,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    padding: 20px;
+    padding: 15px 20px;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -62,19 +62,19 @@ body {
 }
 
 .header h1 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
     color: #007AFF;
 }
 
 .create-btn {
-    padding: 10px 20px;
+    padding: 8px 16px;
     background: #007AFF;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     transition: background 0.3s ease;
 }
 
@@ -83,14 +83,14 @@ body {
 }
 
 .sidebar {
-    width: 80px;
+    width: 60px; /* Уменьшили ширину для Telegram */
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     border-right: 1px solid rgba(0, 122, 255, 0.2);
-    padding: 20px 0;
+    padding: 15px 0;
     height: 100%;
     position: fixed;
-    top: 60px; /* Смещение под header */
+    top: 50px; /* Смещение под header для Telegram */
     left: 0;
     display: flex;
     flex-direction: column;
@@ -107,8 +107,8 @@ body {
 }
 
 .tab {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background: rgba(0, 122, 255, 0.1);
     border: none;
     border-radius: 12px;
@@ -118,18 +118,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    position: relative;
-}
-
-.tab::after {
-    content: attr(data-tab);
-    position: absolute;
-    bottom: -25px;
-    font-size: 12px;
-    color: #007AFF;
-    font-weight: 500;
-    white-space: nowrap;
+    font-size: 18px;
 }
 
 .tab:hover, .tab.active {
@@ -139,7 +128,7 @@ body {
 
 .content {
     flex: 1;
-    padding: 100px 20px 20px 100px; /* Учитываем header и sidebar */
+    padding: 70px 10px 10px 70px; /* Оптимизировано для Telegram */
     overflow-y: auto;
     background: transparent;
 }
@@ -194,7 +183,7 @@ body {
 }
 
 .task-content h3 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: #007AFF;
     margin-bottom: 10px;
@@ -208,7 +197,7 @@ body {
 
 .priority {
     display: inline-block;
-    padding: 5px 10px;
+    padding: 5px 8px;
     border-radius: 5px;
     font-size: 12px;
     font-weight: 500;
@@ -220,7 +209,7 @@ body {
 
 .description, .status, .assignee, .location, .tags {
     margin-top: 5px;
-    font-size: 14px;
+    font-size: 12px;
     color: #666;
 }
 
@@ -240,14 +229,14 @@ body {
 }
 
 button {
-    padding: 10px 20px;
+    padding: 8px 16px;
     background: #007AFF;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
-    font-size: 14px;
+    font-size: 12px;
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -287,19 +276,19 @@ button:hover {
 
 .modal-card {
     width: 90%;
-    max-width: 500px;
+    max-width: 400px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
-    padding: 20px;
+    padding: 15px;
     border: 1px solid rgba(0, 122, 255, 0.1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
 }
 
 .modal-card h3 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     color: #007AFF;
     display: flex;
@@ -308,7 +297,7 @@ button:hover {
 }
 
 .modal-card h3 i {
-    font-size: 22px;
+    font-size: 20px;
     color: #007AFF;
 }
 
@@ -319,7 +308,7 @@ button:hover {
 }
 
 .modal-field label {
-    font-size: 14px;
+    font-size: 12px;
     color: #333;
     display: flex;
     align-items: center;
@@ -328,17 +317,17 @@ button:hover {
 }
 
 .modal-field label i {
-    font-size: 16px;
+    font-size: 14px;
     color: #666;
 }
 
 .modal-field input, .modal-field select, .modal-field textarea {
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background: #f9f9f9;
     color: #333;
-    font-size: 14px;
+    font-size: 12px;
     font-family: 'Montserrat', sans-serif;
     width: 100%;
     transition: border-color 0.3s ease;
@@ -350,7 +339,7 @@ button:hover {
 }
 
 .modal-field textarea {
-    min-height: 80px;
+    min-height: 60px;
     resize: vertical;
 }
 
@@ -362,12 +351,12 @@ button:hover {
 
 .notification {
     position: fixed;
-    top: 80px; /* Смещение под header */
+    top: 70px; /* Смещение под header для Telegram */
     left: 50%;
     transform: translateX(-50%) translateY(-50px);
     background: rgba(0, 122, 255, 0.9);
     color: white;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 8px;
     z-index: 1001;
     opacity: 0;
@@ -380,59 +369,54 @@ button:hover {
     }
 
     .header h1 {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .create-btn {
-        padding: 8px 16px;
-        font-size: 12px;
-    }
-
-    .sidebar {
-        width: 60px;
-        top: 50px;
-    }
-
-    .tab {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
-    }
-
-    .tab::after {
-        bottom: -20px;
+        padding: 6px 12px;
         font-size: 10px;
     }
 
+    .sidebar {
+        width: 50px;
+        top: 40px;
+    }
+
+    .tab {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+
     .content {
-        padding: 70px 10px 10px 70px;
+        padding: 60px 5px 5px 60px;
     }
 
     .card, .task-card {
-        padding: 10px;
+        padding: 8px;
         margin: 5px 0;
     }
 
     .task-content h3 {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .modal-card {
         max-width: 90%;
-        padding: 15px;
+        padding: 10px;
     }
 
     .modal-card h3 {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .modal-field input, .modal-field select, .modal-field textarea {
-        font-size: 12px;
-        padding: 8px;
+        font-size: 10px;
+        padding: 6px;
     }
 
     .notification {
-        padding: 8px 15px;
-        font-size: 12px;
+        padding: 6px 12px;
+        font-size: 10px;
     }
 }
