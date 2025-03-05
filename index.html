@@ -10,31 +10,43 @@
 </head>
 <body>
     <div class="container">
+        <header class="header">
+            <h1 id="userGreeting">Привет, <span id="userName">Пользователь</span></h1>
+            <button class="create-btn" id="create-task-btn">+ Добавить задачу</button>
+        </header>
         <div class="sidebar">
             <div class="tabs">
-                <button class="tab active" data-tab="tasks"><i class="fas fa-tasks"></i></button>
-                <button class="tab" data-tab="habits"><i class="fas fa-recycle"></i></button>
-                <button class="tab" data-tab="goals"><i class="fas fa-bullseye"></i></button>
-                <button class="tab" data-tab="calendar"><i class="fas fa-calendar-alt"></i></button>
+                <button class="tab active" data-tab="tasks"><i class="fas fa-tasks"></i> Задачи</button>
+                <button class="tab" data-tab="habits"><i class="fas fa-recycle"></i> Привычки</button>
+                <button class="tab" data-tab="goals"><i class="fas fa-bullseye"></i> Цели</button>
+                <button class="tab" data-tab="calendar"><i class="fas fa-calendar-alt"></i> Календарь</button>
             </div>
-        </div>
+        </header>
         <div class="content">
-            <div id="tasks" class="tab-content active"></div>
-            <div id="habits" class="tab-content"></div>
-            <div id="goals" class="tab-content"></div>
-            <div id="calendar" class="tab-content"></div>
+            <div id="tasks" class="tab-content active">
+                <!-- Задачи будут рендериться через JavaScript -->
+            </div>
+            <div id="habits" class="tab-content">
+                <!-- Привычки будут рендериться через JavaScript -->
+            </div>
+            <div id="goals" class="tab-content">
+                <!-- Цели будут рендериться через JavaScript -->
+            </div>
+            <div id="calendar" class="tab-content">
+                <!-- Календарь будет рендериться через JavaScript -->
+            </div>
         </div>
     </div>
     <div id="modal" class="modal"></div>
 
-    <script src="scripts/storage.js" defer></script>
-    <script src="scripts/tasks.js" defer></script>
-    <script src="scripts/habits.js" defer></script>
-    <script src="scripts/goals.js" defer></script>
-    <script src="scripts/calendar.js" defer></script>
-    <script src="scripts/modal.js" defer></script>
-    <script src="scripts/notifications.js" defer></script>
-    <script src="scripts/tabs.js" defer></script>
+    <script src="/PlannerApp/scripts/storage.js" defer></script>
+    <script src="/PlannerApp/scripts/tasks.js" defer></script>
+    <script src="/PlannerApp/scripts/habits.js" defer></script>
+    <script src="/PlannerApp/scripts/goals.js" defer></script>
+    <script src="/PlannerApp/scripts/calendar.js" defer></script>
+    <script src="/PlannerApp/scripts/modal.js" defer></script>
+    <script src="/PlannerApp/scripts/notifications.js" defer></script>
+    <script src="/PlannerApp/scripts/tabs.js" defer></script>
     <script>
         window.onload = () => {
             if (window.Telegram?.WebApp) {
@@ -42,12 +54,18 @@
                 Telegram.WebApp.expand();
                 console.log('Telegram Web App инициализирован');
                 Telegram.WebApp.MainButton.hide();
+                
+                // Установить имя пользователя из Telegram
+                const user = Telegram.WebApp.initDataUnsafe?.user;
+                if (user && user.first_name) {
+                    document.getElementById('userName').textContent = user.first_name;
+                }
             } else {
                 console.log('Запуск вне Telegram');
+                document.getElementById('userName').textContent = 'Гость';
             }
 
             try {
-                // Проверка существования объектов перед вызовом
                 if (typeof taskManager !== 'undefined' && taskManager.render) {
                     taskManager.render();
                 }

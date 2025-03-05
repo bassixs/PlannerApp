@@ -13,11 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
             tab.classList.add('active');
             const tabContent = document.getElementById(tab.dataset.tab);
             if (tabContent) {
-                // Уберите активный класс у всех вкладок, чтобы сбросить анимацию
                 setTimeout(() => {
                     tabContent.classList.add('active');
                     console.log('Tab content activated:', tab.dataset.tab);
-                }, 10); // Небольшая задержка для срабатывания анимации
+                }, 10); // Задержка для анимации
             } else {
                 console.error('Tab content not found:', tab.dataset.tab);
             }
