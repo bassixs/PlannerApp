@@ -1,4 +1,3 @@
-/* Подключение шрифта Montserrat через Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
 * {
@@ -8,7 +7,7 @@
 }
 
 body {
-    font-family: 'Montserrat', sans-serif; /* Устанавливаем Montserrat как основной шрифт */
+    font-family: 'Montserrat', sans-serif;
     background: rgba(240, 242, 245, 0.9);
     height: 100vh;
     overflow: hidden;
@@ -21,7 +20,7 @@ body {
 }
 
 .sidebar {
-    width: 80px; /* Уменьшаем ширину под иконки */
+    width: 80px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -49,7 +48,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px; /* Размер иконок */
+    font-size: 24px;
 }
 
 .tab.active, .tab:hover {
@@ -85,11 +84,11 @@ body {
 }
 
 .task-card {
-    cursor: pointer; /* Указываем, что задача кликабельна */
+    cursor: pointer;
 }
 
 .task-card:hover {
-    background: rgba(255, 255, 255, 0.35); /* Лёгкий hover-эффект */
+    background: rgba(255, 255, 255, 0.35);
 }
 
 .card input[type="checkbox"], .task-card input[type="checkbox"] {
@@ -137,7 +136,7 @@ button:hover {
 }
 
 .add-task-btn, .add-btn, .edit-btn {
-    background: rgba(0, 120, 255, 0.2); /* Синий акцент как в O!Task */
+    background: rgba(0, 120, 255, 0.2);
     margin-bottom: 15px;
 }
 
@@ -160,7 +159,7 @@ button:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* Матовый эффект с большей непрозрачностью */
+    background: rgba(0, 0, 0, 0.7);
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -177,7 +176,7 @@ button:hover {
     flex-direction: column;
     gap: 15px;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.5); /* Более светлый фон модального окна */
+    background: rgba(255, 255, 255, 0.5);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -222,7 +221,7 @@ button:hover {
     padding: 10px;
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.3); /* Более светлый фон для полей */
+    background: rgba(255, 255, 255, 0.3);
     color: #333;
     font-size: 14px;
     font-family: 'Montserrat', sans-serif;

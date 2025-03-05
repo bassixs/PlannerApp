@@ -1,28 +1,13 @@
 class Modal {
     static showTaskForm() {
         const modal = document.getElementById('modal');
-        if (!modal) {
-            console.error('Контейнер модального окна не найден');
-            return;
-        }
+        if (!modal) return;
         modal.innerHTML = `
             <div class="card modal-card">
                 <h3><i class="fas fa-tasks"></i> Новая задача</h3>
                 <div class="modal-field">
-                    <label><i class="fas fa-info-circle"></i> Описание задачи</label>
-                    <textarea id="taskDescription" placeholder="Введите описание"></textarea>
-                </div>
-                <div class="modal-field">
-                    <label><i class="fas fa-circle"></i> Статус</label>
-                    <select id="taskStatus">
-                        <option value="in-progress" selected>В работе</option>
-                        <option value="completed">Завершено</option>
-                        <option value="paused">На паузе</option>
-                    </select>
-                </div>
-                <div class="modal-field">
-                    <label><i class="fas fa-user"></i> Исполнитель</label>
-                    <input id="taskAssignee" placeholder="Введите имя или выберите">
+                    <label><i class="fas fa-info-circle"></i> Описание</label>
+                    <input id="taskDescription" placeholder="Введите описание">
                 </div>
                 <div class="modal-field">
                     <label><i class="fas fa-calendar-alt"></i> Дата</label>
@@ -37,12 +22,24 @@ class Modal {
                     </select>
                 </div>
                 <div class="modal-field">
-                    <label><i class="fas fa-map-marker-alt"></i> Площадка выполнения</label>
+                    <label><i class="fas fa-circle"></i> Статус</label>
+                    <select id="taskStatus">
+                        <option value="in-progress" selected>В работе</option>
+                        <option value="completed">Завершено</option>
+                        <option value="paused">На паузе</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label><i class="fas fa-user"></i> Исполнитель</label>
+                    <input id="taskAssignee" placeholder="Введите имя">
+                </div>
+                <div class="modal-field">
+                    <label><i class="fas fa-map-marker-alt"></i> Площадка</label>
                     <input id="taskLocation" placeholder="Введите площадку">
                 </div>
                 <div class="modal-field">
                     <label><i class="fas fa-tags"></i> Метки</label>
-                    <input id="taskTags" placeholder="+ Добавить метку">
+                    <input id="taskTags" placeholder="Метки через запятую">
                 </div>
                 <div class="modal-buttons">
                     <button class="cancel-btn" id="modal-cancel-btn">Отмена</button>
@@ -51,75 +48,32 @@ class Modal {
             </div>
         `;
         modal.classList.add('active');
-        console.log('Модальное окно открыто');
 
-        const addBtn = modal.querySelector('#modal-add-btn');
-        const cancelBtn = modal.querySelector('#modal-cancel-btn');
-
-        if (addBtn) {
-            addBtn.addEventListener('click', () => {
-                console.log('Кнопка "Сохранить" в модальном окне нажата');
-                taskManager.addTask(
-                    document.getElementById('taskDescription').value,
-                    document.getElementById('taskDue').value,
-                    document.getElementById('taskPriority').value,
-                    document.getElementById('taskDescription').value,
-                    document.getElementById('taskStatus').value,
-                    document.getElementById('taskAssignee').value,
-                    document.getElementById('taskLocation').value,
-                    document.getElementById('taskTags').value
-                );
-                Modal.hide();
-            });
-            if (window.Telegram?.WebApp) {
-                addBtn.addEventListener('touchstart', () => {
-                    taskManager.addTask(
-                        document.getElementById('taskDescription').value,
-                        document.getElementById('taskDue').value,
-                        document.getElementById('taskPriority').value,
-                        document.getElementById('taskDescription').value,
-                        document.getElementById('taskStatus').value,
-                        document.getElementById('taskAssignee').value,
-                        document.getElementById('taskLocation').value,
-                        document.getElementById('taskTags').value
-                    );
-                    Modal.hide();
-                });
-            }
-        }
-
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', () => {
-                console.log('Кнопка "Отмена" нажата');
-                Modal.hide();
-            });
-        }
+        modal.querySelector('#modal-add-btn').addEventListener('click', () => {
+            taskManager.addTask(
+                document.getElementById('taskDescription').value,
+                document.getElementById('taskDue').value,
+                document.getElementById('taskPriority').value,
+                document.getElementById('taskDescription').value,
+                document.getElementById('taskStatus').value,
+                document.getElementById('taskAssignee').value,
+                document.getElementById('taskLocation').value,
+                document.getElementById('taskTags').value
+            );
+            Modal.hide();
+        });
+        modal.querySelector('#modal-cancel-btn').addEventListener('click', () => Modal.hide());
     }
 
     static showEditTaskForm(task) {
         const modal = document.getElementById('modal');
-        if (!modal) {
-            console.error('Контейнер модального окна не найден');
-            return;
-        }
+        if (!modal) return;
         modal.innerHTML = `
             <div class="card modal-card">
                 <h3><i class="fas fa-tasks"></i> Редактировать задачу</h3>
                 <div class="modal-field">
-                    <label><i class="fas fa-info-circle"></i> Описание задачи</label>
-                    <textarea id="taskDescription" placeholder="Введите описание">${task.description || ''}</textarea>
-                </div>
-                <div class="modal-field">
-                    <label><i class="fas fa-circle"></i> Статус</label>
-                    <select id="taskStatus">
-                        <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>В работе</option>
-                        <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Завершено</option>
-                        <option value="paused" ${task.status === 'paused' ? 'selected' : ''}>На паузе</option>
-                    </select>
-                </div>
-                <div class="modal-field">
-                    <label><i class="fas fa-user"></i> Исполнитель</label>
-                    <input id="taskAssignee" value="${task.assignee || ''}" placeholder="Введите имя или выберите">
+                    <label><i class="fas fa-info-circle"></i> Описание</label>
+                    <input id="taskDescription" value="${task.description || ''}" placeholder="Введите описание">
                 </div>
                 <div class="modal-field">
                     <label><i class="fas fa-calendar-alt"></i> Дата</label>
@@ -134,12 +88,24 @@ class Modal {
                     </select>
                 </div>
                 <div class="modal-field">
-                    <label><i class="fas fa-map-marker-alt"></i> Площадка выполнения</label>
+                    <label><i class="fas fa-circle"></i> Статус</label>
+                    <select id="taskStatus">
+                        <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>В работе</option>
+                        <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Завершено</option>
+                        <option value="paused" ${task.status === 'paused' ? 'selected' : ''}>На паузе</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label><i class="fas fa-user"></i> Исполнитель</label>
+                    <input id="taskAssignee" value="${task.assignee || ''}" placeholder="Введите имя">
+                </div>
+                <div class="modal-field">
+                    <label><i class="fas fa-map-marker-alt"></i> Площадка</label>
                     <input id="taskLocation" value="${task.location || ''}" placeholder="Введите площадку">
                 </div>
                 <div class="modal-field">
                     <label><i class="fas fa-tags"></i> Метки</label>
-                    <input id="taskTags" value="${task.tags.join(', ') || ''}" placeholder="+ Добавить метку">
+                    <input id="taskTags" value="${task.tags.join(', ') || ''}" placeholder="Метки через запятую">
                 </div>
                 <div class="modal-buttons">
                     <button class="cancel-btn" id="modal-cancel-btn">Отмена</button>
@@ -148,54 +114,89 @@ class Modal {
             </div>
         `;
         modal.classList.add('active');
-        console.log('Модальное окно редактирования открыто');
 
-        const editBtn = modal.querySelector('#modal-edit-btn');
-        const cancelBtn = modal.querySelector('#modal-cancel-btn');
-
-        if (editBtn) {
-            editBtn.addEventListener('click', () => {
-                console.log('Кнопка "Сохранить" в модальном окне редактирования нажата');
-                taskManager.editTask(task.id, {
-                    description: document.getElementById('taskDescription').value,
-                    dueDate: document.getElementById('taskDue').value,
-                    priority: document.getElementById('taskPriority').value,
-                    taskDescription: document.getElementById('taskDescription').value,  // Описание совпадает с основным
-                    status: document.getElementById('taskStatus').value,
-                    assignee: document.getElementById('taskAssignee').value,
-                    location: document.getElementById('taskLocation').value,
-                    tags: document.getElementById('taskTags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
-                });
-                Modal.hide();
+        modal.querySelector('#modal-edit-btn').addEventListener('click', () => {
+            taskManager.editTask(task.id, {
+                description: document.getElementById('taskDescription').value,
+                dueDate: document.getElementById('taskDue').value,
+                priority: document.getElementById('taskPriority').value,
+                taskDescription: document.getElementById('taskDescription').value,
+                status: document.getElementById('taskStatus').value,
+                assignee: document.getElementById('taskAssignee').value,
+                location: document.getElementById('taskLocation').value,
+                tags: document.getElementById('taskTags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
             });
-            if (window.Telegram?.WebApp) {
-                editBtn.addEventListener('touchstart', () => {
-                    taskManager.editTask(task.id, {
-                        description: document.getElementById('taskDescription').value,
-                        dueDate: document.getElementById('taskDue').value,
-                        priority: document.getElementById('taskPriority').value,
-                        taskDescription: document.getElementById('taskDescription').value,
-                        status: document.getElementById('taskStatus').value,
-                        assignee: document.getElementById('taskAssignee').value,
-                        location: document.getElementById('taskLocation').value,
-                        tags: document.getElementById('taskTags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
-                    });
-                    Modal.hide();
-                });
-            }
-        }
+            Modal.hide();
+        });
+        modal.querySelector('#modal-cancel-btn').addEventListener('click', () => Modal.hide());
+    }
 
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', () => {
-                console.log('Кнопка "Отмена" в модальном окне редактирования нажата');
-                Modal.hide();
-            });
-        }
+    static showHabitForm() {
+        const modal = document.getElementById('modal');
+        if (!modal) return;
+        modal.innerHTML = `
+            <div class="card modal-card">
+                <h3><i class="fas fa-recycle"></i> Новая привычка</h3>
+                <div class="modal-field">
+                    <label><i class="fas fa-info-circle"></i> Название</label>
+                    <input id="habitTitle" placeholder="Введите название">
+                </div>
+                <div class="modal-field">
+                    <label><i class="fas fa-clock"></i> Частота</label>
+                    <input id="habitFrequency" placeholder="Например, ежедневно">
+                </div>
+                <div class="modal-buttons">
+                    <button class="cancel-btn" id="modal-cancel-btn">Отмена</button>
+                    <button class="add-btn" id="modal-add-btn">Сохранить</button>
+                </div>
+            </div>
+        `;
+        modal.classList.add('active');
+
+        modal.querySelector('#modal-add-btn').addEventListener('click', () => {
+            habitManager.addHabit(
+                document.getElementById('habitTitle').value,
+                document.getElementById('habitFrequency').value
+            );
+            Modal.hide();
+        });
+        modal.querySelector('#modal-cancel-btn').addEventListener('click', () => Modal.hide());
+    }
+
+    static showGoalForm() {
+        const modal = document.getElementById('modal');
+        if (!modal) return;
+        modal.innerHTML = `
+            <div class="card modal-card">
+                <h3><i class="fas fa-bullseye"></i> Новая цель</h3>
+                <div class="modal-field">
+                    <label><i class="fas fa-info-circle"></i> Название</label>
+                    <input id="goalTitle" placeholder="Введите название">
+                </div>
+                <div class="modal-field">
+                    <label><i class="fas fa-calendar-alt"></i> Срок</label>
+                    <input id="goalDeadline" type="date">
+                </div>
+                <div class="modal-buttons">
+                    <button class="cancel-btn" id="modal-cancel-btn">Отмена</button>
+                    <button class="add-btn" id="modal-add-btn">Сохранить</button>
+                </div>
+            </div>
+        `;
+        modal.classList.add('active');
+
+        modal.querySelector('#modal-add-btn').addEventListener('click', () => {
+            goalManager.addGoal(
+                document.getElementById('goalTitle').value,
+                document.getElementById('goalDeadline').value
+            );
+            Modal.hide();
+        });
+        modal.querySelector('#modal-cancel-btn').addEventListener('click', () => Modal.hide());
     }
 
     static hide() {
         const modal = document.getElementById('modal');
         modal.classList.remove('active');
-        console.log('Модальное окно закрыто');
     }
 }

@@ -20,12 +20,12 @@ class HabitManager {
     render() {
         const container = document.getElementById('habits');
         container.innerHTML = `
-            <button onclick="Modal.showHabitForm()">Add Habit</button>
+            <button class="add-btn" onclick="Modal.showHabitForm()">Добавить привычку</button>
             ${this.habits.map(habit => `
                 <div class="card">
                     <span>${habit.title}</span>
-                    <small>Frequency: ${habit.frequency}</small>
-                    <span>Streak: ${habit.streak}</span>
+                    <small>Частота: ${habit.frequency}</small>
+                    <span>Серия: ${habit.streak}</span>
                 </div>
             `).join('')}
         `;

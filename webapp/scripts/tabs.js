@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            console.log(`Tab ${tab.dataset.tab} clicked`);
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if (window.Telegram?.WebApp) {
             tab.addEventListener('touchstart', () => {
-                console.log(`Touchstart on tab ${tab.dataset.tab}`);
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 

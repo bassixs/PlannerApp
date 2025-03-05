@@ -90,48 +90,33 @@ class TaskManager {
         const container = document.getElementById('tasks');
         const addButton = container.querySelector('#add-task-btn');
         if (addButton) {
-            addButton.addEventListener('click', () => {
-                console.log('Кнопка "Добавить задачу" нажата');
-                Modal.showTaskForm();
-            });
+            addButton.addEventListener('click', () => Modal.showTaskForm());
             if (window.Telegram?.WebApp) {
-                addButton.addEventListener('touchstart', () => {
-                    console.log('Touchstart на "Добавить задачу"');
-                    Modal.showTaskForm();
-                });
+                addButton.addEventListener('touchstart', () => Modal.showTaskForm());
             }
         }
 
         container.querySelectorAll('.task-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
-                console.log('Чекбокс изменён');
                 const id = parseInt(e.target.closest('.task-card').dataset.id);
                 this.toggleTask(id);
             });
         });
 
-        // Обработка клика на задачу для редактирования
         container.querySelectorAll('.task-card').forEach(card => {
             card.addEventListener('click', (e) => {
-                // Проверяем, не клик по чекбоксу
                 if (!e.target.classList.contains('task-checkbox')) {
-                    console.log('Клик на задачу для редактирования');
                     const id = parseInt(card.dataset.id);
                     const task = this.tasks.find(t => t.id === id);
-                    if (task) {
-                        Modal.showEditTaskForm(task);
-                    }
+                    if (task) Modal.showEditTaskForm(task);
                 }
             });
             if (window.Telegram?.WebApp) {
                 card.addEventListener('touchstart', (e) => {
                     if (!e.target.classList.contains('task-checkbox')) {
-                        console.log('Touchstart на задачу для редактирования');
                         const id = parseInt(card.dataset.id);
                         const task = this.tasks.find(t => t.id === id);
-                        if (task) {
-                            Modal.showEditTaskForm(task);
-                        }
+                        if (task) Modal.showEditTaskForm(task);
                     }
                 });
             }

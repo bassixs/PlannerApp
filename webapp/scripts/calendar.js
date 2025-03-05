@@ -7,9 +7,8 @@ class Calendar {
         const container = document.getElementById('calendar');
         container.innerHTML = `
             <div class="card">
-                <h3>Calendar View</h3>
-                <!-- Здесь будет интеграция с задачами -->
-                <p>Coming soon: Full calendar integration</p>
+                <h3>Календарь</h3>
+                <p>Пока в разработке: интеграция с задачами скоро будет добавлена.</p>
             </div>
         `;
     }

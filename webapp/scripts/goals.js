@@ -19,12 +19,12 @@ class GoalManager {
     render() {
         const container = document.getElementById('goals');
         container.innerHTML = `
-            <button onclick="Modal.showGoalForm()">Add Goal</button>
+            <button class="add-btn" onclick="Modal.showGoalForm()">Добавить цель</button>
             ${this.goals.map(goal => `
                 <div class="card">
                     <span>${goal.title}</span>
-                    <small>Deadline: ${goal.deadline}</small>
-                    <span>Progress: ${goal.progress}%</span>
+                    <small>Срок: ${goal.deadline || 'Не указан'}</small>
+                    <span>Прогресс: ${goal.progress}%</span>
                 </div>
             `).join('')}
         `;
