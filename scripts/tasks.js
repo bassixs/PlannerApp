@@ -60,7 +60,7 @@ class TaskManager {
                         <span>Приоритет: ${this.translatePriority(task.priority)}</span>
                         ${task.taskDescription ? `<p>Описание: ${task.taskDescription}</p>` : ''}
                         ${task.status ? `<p>Статус: ${this.translateStatus(task.status)}</p>` : ''}
-                        ${task.assignee ? `<p>Исполнитель: ${task.assignee}</p>` : '' }
+                        ${task.assignee ? `<p>Исполнитель: ${task.assignee}</p>` : ''}
                         ${task.location ? `<p>Площадка: ${task.location}</p>` : ''}
                         ${task.tags.length ? `<p>Метки: ${task.tags.join(', ')}</p>` : ''}
                     </div>
