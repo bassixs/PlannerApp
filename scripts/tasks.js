@@ -1,6 +1,7 @@
 class TaskManager {
     constructor() {
         this.tasks = Storage.load('tasks') || [];
+        console.log('TaskManager initialized with tasks:', this.tasks);
         this.render();
     }
 
@@ -45,6 +46,7 @@ class TaskManager {
             console.error('Контейнер задач не найден');
             return;
         }
+        console.log('Rendering tasks:', this.tasks);
         container.innerHTML = `
             <button class="add-task-btn" id="add-task-btn">Добавить задачу</button>
             ${this.tasks.map(task => `

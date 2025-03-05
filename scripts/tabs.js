@@ -6,19 +6,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
+            console.log('Tab clicked:', tab.dataset.tab);
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
             tab.classList.add('active');
-            document.getElementById(tab.dataset.tab).classList.add('active');
+            const tabContent = document.getElementById(tab.dataset.tab);
+            if (tabContent) {
+                tabContent.classList.add('active');
+                console.log('Tab content activated:', tab.dataset.tab);
+            } else {
+                console.error('Tab content not found:', tab.dataset.tab);
+            }
         });
         if (window.Telegram?.WebApp) {
             tab.addEventListener('touchstart', () => {
+                console.log('Tab touched:', tab.dataset.tab);
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 
                 tab.classList.add('active');
-                document.getElementById(tab.dataset.tab).classList.add('active');
+                const tabContent = document.getElementById(tab.dataset.tab);
+                if (tabContent) {
+                    tabContent.classList.add('active');
+                    console.log('Tab content activated (touch):', tab.dataset.tab);
+                } else {
+                    console.error('Tab content not found (touch):', tab.dataset.tab);
+                }
             });
         }
     });
