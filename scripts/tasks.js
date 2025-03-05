@@ -50,19 +50,19 @@ class TaskManager {
         container.innerHTML = `
             <button class="add-task-btn" id="add-task-btn">Добавить задачу</button>
             ${Array.isArray(this.tasks) ? this.tasks.map(task => `
-                <div class="card task-card" data-id="${task.id}">
+                <div class="card task-card ${task.completed ? 'completed' : ''}" data-id="${task.id}">
                     <input type="checkbox" 
                         ${task.completed ? 'checked' : ''} 
                         class="task-checkbox">
                     <div class="task-content">
-                        <span>${task.description}</span>
+                        <h3>${task.description}</h3>
                         <small>Срок: ${task.dueDate || 'Не указан'}</small>
-                        <span>Приоритет: ${this.translatePriority(task.priority)}</span>
-                        ${task.taskDescription ? `<p>Описание: ${task.taskDescription}</p>` : ''}
-                        ${task.status ? `<p>Статус: ${this.translateStatus(task.status)}</p>` : ''}
-                        ${task.assignee ? `<p>Исполнитель: ${task.assignee}</p>` : ''}
-                        ${task.location ? `<p>Площадка: ${task.location}</p>` : ''}
-                        ${task.tags.length ? `<p>Метки: ${task.tags.join(', ')}</p>` : ''}
+                        <span class="priority priority-${task.priority}">Приоритет: ${this.translatePriority(task.priority)}</span>
+                        ${task.taskDescription ? `<p class="description">Описание: ${task.taskDescription}</p>` : ''}
+                        ${task.status ? `<p class="status">Статус: ${this.translateStatus(task.status)}</p>` : ''}
+                        ${task.assignee ? `<p class="assignee">Исполнитель: ${task.assignee}</p>` : ''}
+                        ${task.location ? `<p class="location">Площадка: ${task.location}</p>` : ''}
+                        ${task.tags.length ? `<p class="tags">Метки: ${task.tags.join(', ')}</p>` : ''}
                     </div>
                 </div>
             `).join('') : '<p>Нет задач для отображения</p>'}

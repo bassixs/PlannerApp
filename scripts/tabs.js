@@ -13,8 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tab.classList.add('active');
             const tabContent = document.getElementById(tab.dataset.tab);
             if (tabContent) {
-                tabContent.classList.add('active');
-                console.log('Tab content activated:', tab.dataset.tab);
+                // Уберите активный класс у всех вкладок, чтобы сбросить анимацию
+                setTimeout(() => {
+                    tabContent.classList.add('active');
+                    console.log('Tab content activated:', tab.dataset.tab);
+                }, 10); // Небольшая задержка для срабатывания анимации
             } else {
                 console.error('Tab content not found:', tab.dataset.tab);
             }
@@ -28,8 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 tab.classList.add('active');
                 const tabContent = document.getElementById(tab.dataset.tab);
                 if (tabContent) {
-                    tabContent.classList.add('active');
-                    console.log('Tab content activated (touch):', tab.dataset.tab);
+                    setTimeout(() => {
+                        tabContent.classList.add('active');
+                        console.log('Tab content activated (touch):', tab.dataset.tab);
+                    }, 10);
                 } else {
                     console.error('Tab content not found (touch):', tab.dataset.tab);
                 }

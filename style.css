@@ -70,14 +70,15 @@ body {
     border-radius: 12px;
     color: #333;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: transform 0.2s ease, background 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
 }
 
-.tab.active, .tab:hover {
+.tab:hover, .tab.active {
+    transform: scale(1.1);
     background: rgba(255, 255, 255, 0.4);
 }
 
@@ -91,10 +92,15 @@ body {
 
 .tab-content {
     display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .tab-content.active {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .card, .task-card {
@@ -110,7 +116,14 @@ body {
 }
 
 .task-card {
+    transition: background 0.3s ease, opacity 0.3s ease;
     cursor: pointer;
+}
+
+.task-card.completed {
+    background: rgba(144, 238, 144, 0.3); /* Светло-зеленый фон для завершенных задач */
+    text-decoration: line-through;
+    opacity: 0.7;
 }
 
 .task-card:hover {
@@ -144,6 +157,30 @@ body {
 
 .task-content {
     flex: 1;
+}
+
+.task-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.priority {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.priority-low { background: #90ee90; color: #333; } /* Светло-зеленый */
+.priority-medium { background: #ffd700; color: #333; } /* Золотой */
+.priority-high { background: #ff6347; color: white; } /* Томатный */
+
+.description, .status, .assignee, .location, .tags {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #666;
 }
 
 button {
@@ -265,6 +302,20 @@ button:hover {
     justify-content: flex-end;
 }
 
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50px);
+    background: rgba(0, 120, 255, 0.9);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
 @media (max-width: 600px) {
     .sidebar {
         width: 60px;
@@ -287,5 +338,10 @@ button:hover {
     .modal-card {
         max-width: 90%;
         padding: 15px;
+    }
+
+    .notification {
+        padding: 8px 15px;
+        font-size: 12px;
     }
 }
