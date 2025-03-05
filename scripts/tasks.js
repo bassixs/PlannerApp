@@ -63,7 +63,7 @@ class TaskManager {
                         ${task.tags.length ? `<p>Метки: ${task.tags.join(', ')}</p>` : ''}
                     </div>
                 </div>
-            `).join('')}
+            `).join('') || ''}
         `;
         this.bindEvents();
     }

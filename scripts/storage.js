@@ -1,6 +1,7 @@
 class Storage {
     static load(key) {
-        return JSON.parse(localStorage.getItem(key));
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : [];
     }
 
     static save(key, data) {
