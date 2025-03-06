@@ -250,4 +250,11 @@ class TaskManager {
         taskList.addEventListener('dragover', handleDragOver);
         taskList.addEventListener('drop', handleDrop);
 
-        completedList.addEven
+        completedList.addEventListener('dragstart', handleDragStart);
+        completedList.addEventListener('dragend', handleDragEnd);
+        completedList.addEventListener('dragover', handleDragOver);
+        completedList.addEventListener('drop', handleDrop);
+    }
+}
+
+const taskManager = new TaskManager();
