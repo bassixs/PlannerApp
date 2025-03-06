@@ -157,10 +157,13 @@ class TaskManager {
         const tasksContainer = document.getElementById('tasks');
         const addButton = tasksContainer.querySelector('#add-task-btn');
         if (addButton) {
-            addButton.addEventListener('click', () => Modal.showTaskForm());
+            addButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                Modal.showTaskForm();
+            });
             if (window.Telegram?.WebApp) {
-                addButton.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); // Предотвращаем стандартное поведение
+                addButton.addEventListener('touchend', (e) => {
+                    e.preventDefault();
                     Modal.showTaskForm();
                 }, { passive: false });
             }
@@ -172,10 +175,11 @@ class TaskManager {
                 this.toggleTask(id);
             });
             if (window.Telegram?.WebApp) {
-                checkbox.addEventListener('touchend', (e) => {
+                checkbox.addEventListener('touchstart', (e) => {
                     e.preventDefault();
-                    checkbox.checked = !checkbox.checked;
+                    e.stopPropagation(); // Останавливаем всплытие события
                     const id = parseInt(e.target.closest('.task-card').dataset.id);
+                    checkbox.checked = !checkbox.checked;
                     this.toggleTask(id);
                 }, { passive: false });
             }
@@ -183,12 +187,14 @@ class TaskManager {
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Предотвращаем открытие модального окна
                 const id = parseInt(e.target.dataset.id);
                 this.deleteTask(id);
             });
             if (window.Telegram?.WebApp) {
-                btn.addEventListener('touchstart', (e) => {
+                btn.addEventListener('touchend', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     const id = parseInt(e.target.dataset.id);
                     this.deleteTask(id);
                 }, { passive: false });
@@ -204,9 +210,9 @@ class TaskManager {
                 }
             });
             if (window.Telegram?.WebApp) {
-                card.addEventListener('touchstart', (e) => {
+                card.addEventListener('touchend', (e) => {
+                    e.preventDefault();
                     if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-btn')) {
-                        e.preventDefault();
                         const id = parseInt(card.dataset.id);
                         const task = this.activeTasks.find(t => t.id === id) || this.completedTasks.find(t => t.id === id);
                         if (task) Modal.showEditTaskForm(task);
@@ -226,8 +232,6 @@ class TaskManager {
             if (taskCard && !window.Telegram?.WebApp) { // Drag and Drop только для ПК
                 e.dataTransfer.setData('text/plain', taskCard.dataset.id);
                 taskCard.classList.add('dragging');
-            } else if (window.Telegram?.WebApp) {
-                this.handleTouchDragStart(taskCard);
             }
         };
 

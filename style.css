@@ -38,7 +38,10 @@ body {
     height: 100vh;
     overflow: hidden;
     color: #333;
-    touch-action: manipulation; /* Улучшение обработки touch-событий */
+    touch-action: manipulation;
+    -webkit-user-select: none; /* Отключение выделения текста */
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .container {
@@ -77,6 +80,7 @@ body {
     cursor: pointer;
     font-size: 10px;
     transition: background 0.3s ease;
+    touch-action: manipulation;
 }
 
 .create-btn:hover {
@@ -120,7 +124,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    touch-action: manipulation; /* Поддержка touch */
+    touch-action: manipulation;
 }
 
 .tab:hover, .tab.active {
@@ -130,10 +134,10 @@ body {
 
 .content {
     flex: 1;
-    padding: 50px 5px 5px 55px; /* Уменьшено для мобильных устройств */
+    padding: 50px 5px 5px 55px;
     overflow-y: auto;
     background: transparent;
-    -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
+    -webkit-overflow-scrolling: touch;
 }
 
 .tab-content {
@@ -160,13 +164,13 @@ body {
     flex-direction: column;
     gap: 8px;
     position: relative;
-    touch-action: manipulation; /* Поддержка touch для Drag and Drop */
+    touch-action: auto; /* Разрешаем touch для карточек */
 }
 
 .task-card {
     transition: background 0.3s ease, opacity 0.3s ease, transform 0.5s ease;
-    cursor: move; /* Указатель для Drag and Drop */
-    -webkit-user-select: none; /* Отключение выделения текста на iOS */
+    cursor: move;
+    -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
@@ -189,7 +193,8 @@ body {
 .card input[type="checkbox"], .task-card input[type="checkbox"] {
     cursor: pointer;
     margin-right: 8px;
-    -webkit-tap-highlight-color: transparent; /* Улучшение touch на iOS */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .delete-btn {
@@ -205,6 +210,7 @@ body {
     font-size: 10px;
     transition: background 0.3s ease;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .delete-btn:hover {
@@ -272,6 +278,7 @@ button {
     font-size: 10px;
     font-family: 'Montserrat', sans-serif;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 button:hover {
@@ -302,6 +309,8 @@ button:hover {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow-y: auto; /* Поддержка прокрутки модального окна */
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal.active {
@@ -319,6 +328,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    touch-action: auto; /* Разрешаем touch внутри модального окна */
 }
 
 .modal-card h3 {
@@ -365,6 +375,7 @@ button:hover {
     font-family: 'Montserrat', sans-serif;
     width: 100%;
     transition: border-color 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus {
@@ -385,7 +396,7 @@ button:hover {
 
 .notification {
     position: fixed;
-    top: 50px; /* Смещение под header для Telegram */
+    top: 50px;
     left: 50%;
     transform: translateX(-50%) translateY(-50px);
     background: rgba(0, 122, 255, 0.9);
