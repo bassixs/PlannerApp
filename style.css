@@ -38,6 +38,7 @@ body {
     height: 100vh;
     overflow: hidden;
     color: #333;
+    touch-action: manipulation; /* Улучшение обработки touch-событий */
 }
 
 .container {
@@ -51,7 +52,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    padding: 15px 20px;
+    padding: 10px 15px;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -62,19 +63,19 @@ body {
 }
 
 .header h1 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     color: #007AFF;
 }
 
 .create-btn {
-    padding: 8px 16px;
+    padding: 6px 12px;
     background: #007AFF;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 10px;
     transition: background 0.3s ease;
 }
 
@@ -83,14 +84,14 @@ body {
 }
 
 .sidebar {
-    width: 60px; /* Уменьшили ширину для Telegram */
+    width: 50px;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     border-right: 1px solid rgba(0, 122, 255, 0.2);
-    padding: 15px 0;
+    padding: 10px 0;
     height: 100%;
     position: fixed;
-    top: 50px; /* Смещение под header для Telegram */
+    top: 40px;
     left: 0;
     display: flex;
     flex-direction: column;
@@ -101,24 +102,25 @@ body {
 .tabs {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     width: 100%;
     align-items: center;
 }
 
 .tab {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     background: rgba(0, 122, 255, 0.1);
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     color: #007AFF;
     cursor: pointer;
     transition: transform 0.2s ease, background 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
+    touch-action: manipulation; /* Поддержка touch */
 }
 
 .tab:hover, .tab.active {
@@ -128,15 +130,16 @@ body {
 
 .content {
     flex: 1;
-    padding: 70px 10px 10px 70px; /* Оптимизировано для Telegram */
+    padding: 50px 5px 5px 55px; /* Уменьшено для мобильных устройств */
     overflow-y: auto;
     background: transparent;
+    -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
 }
 
 .tab-content {
     display: none;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
@@ -148,24 +151,28 @@ body {
 
 .card, .task-card {
     background: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    padding: 15px;
-    margin: 10px 0;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px 0;
     border: 1px solid rgba(0, 122, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    position: relative; /* Для Drag and Drop */
+    gap: 8px;
+    position: relative;
+    touch-action: manipulation; /* Поддержка touch для Drag and Drop */
 }
 
 .task-card {
     transition: background 0.3s ease, opacity 0.3s ease, transform 0.5s ease;
     cursor: move; /* Указатель для Drag and Drop */
+    -webkit-user-select: none; /* Отключение выделения текста на iOS */
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .task-card.completed {
-    background: rgba(144, 238, 144, 0.2); /* Светло-зеленый фон для завершенных задач */
+    background: rgba(144, 238, 144, 0.2);
     text-decoration: line-through;
     opacity: 0.7;
     animation: completeTask 0.5s ease forwards;
@@ -181,21 +188,23 @@ body {
 
 .card input[type="checkbox"], .task-card input[type="checkbox"] {
     cursor: pointer;
-    margin-right: 10px;
+    margin-right: 8px;
+    -webkit-tap-highlight-color: transparent; /* Улучшение touch на iOS */
 }
 
 .delete-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 5px 10px;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
     background: #ff6347;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 10px;
     transition: background 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .delete-btn:hover {
@@ -207,61 +216,62 @@ body {
 }
 
 .task-content h3 {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #007AFF;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .task-content small {
     color: #666;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 500;
 }
 
 .priority {
     display: inline-block;
-    padding: 5px 8px;
-    border-radius: 5px;
-    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 10px;
     font-weight: 500;
 }
 
-.priority-low { background: #90ee90; color: #333; } /* Светло-зеленый */
-.priority-medium { background: #B19CD9; color: #333; } /* Светло-фиолетовый */
-.priority-high { background: #ff6347; color: white; } /* Томатный */
+.priority-low { background: #90ee90; color: #333; }
+.priority-medium { background: #B19CD9; color: #333; }
+.priority-high { background: #ff6347; color: white; }
 
 .description, .status, .assignee, .location, .tags {
-    margin-top: 5px;
-    font-size: 12px;
+    margin-top: 4px;
+    font-size: 10px;
     color: #666;
 }
 
 .progress-bar {
     width: 100%;
-    height: 8px;
+    height: 6px;
     background: #e0e0e0;
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
 }
 
 .progress {
     height: 100%;
     background: #007AFF;
-    border-radius: 4px;
+    border-radius: 3px;
     transition: width 0.3s ease;
 }
 
 button {
-    padding: 8px 16px;
+    padding: 6px 12px;
     background: #007AFF;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
-    font-size: 12px;
+    font-size: 10px;
     font-family: 'Montserrat', sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
 button:hover {
@@ -270,7 +280,7 @@ button:hover {
 }
 
 .add-task-btn, .add-btn, .edit-btn {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .cancel-btn {
@@ -300,19 +310,19 @@ button:hover {
 
 .modal-card {
     width: 90%;
-    max-width: 400px;
+    max-width: 350px;
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
-    padding: 15px;
+    border-radius: 10px;
+    padding: 10px;
     border: 1px solid rgba(0, 122, 255, 0.1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .modal-card h3 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: #007AFF;
     display: flex;
@@ -321,7 +331,7 @@ button:hover {
 }
 
 .modal-card h3 i {
-    font-size: 20px;
+    font-size: 18px;
     color: #007AFF;
 }
 
@@ -332,7 +342,7 @@ button:hover {
 }
 
 .modal-field label {
-    font-size: 12px;
+    font-size: 10px;
     color: #333;
     display: flex;
     align-items: center;
@@ -341,17 +351,17 @@ button:hover {
 }
 
 .modal-field label i {
-    font-size: 14px;
+    font-size: 12px;
     color: #666;
 }
 
 .modal-field input, .modal-field select, .modal-field textarea {
-    padding: 8px;
+    padding: 6px;
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: 6px;
     background: #f9f9f9;
     color: #333;
-    font-size: 12px;
+    font-size: 10px;
     font-family: 'Montserrat', sans-serif;
     width: 100%;
     transition: border-color 0.3s ease;
@@ -363,25 +373,25 @@ button:hover {
 }
 
 .modal-field textarea {
-    min-height: 60px;
+    min-height: 50px;
     resize: vertical;
 }
 
 .modal-buttons {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: flex-end;
 }
 
 .notification {
     position: fixed;
-    top: 70px; /* Смещение под header для Telegram */
+    top: 50px; /* Смещение под header для Telegram */
     left: 50%;
     transform: translateX(-50%) translateY(-50px);
     background: rgba(0, 122, 255, 0.9);
     color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
     z-index: 1001;
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -395,58 +405,58 @@ button:hover {
 
 @media (max-width: 600px) {
     .header {
-        padding: 10px;
+        padding: 8px;
     }
 
     .header h1 {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .create-btn {
-        padding: 6px 12px;
-        font-size: 10px;
+        padding: 5px 10px;
+        font-size: 8px;
     }
 
     .sidebar {
-        width: 50px;
-        top: 40px;
+        width: 45px;
+        top: 35px;
     }
 
     .tab {
-        width: 35px;
-        height: 35px;
-        font-size: 16px;
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
     }
 
     .content {
-        padding: 60px 5px 5px 60px;
+        padding: 45px 5px 5px 50px;
     }
 
     .card, .task-card {
-        padding: 8px;
-        margin: 5px 0;
+        padding: 6px;
+        margin: 3px 0;
     }
 
     .task-content h3 {
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .modal-card {
         max-width: 90%;
-        padding: 10px;
+        padding: 8px;
     }
 
     .modal-card h3 {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .modal-field input, .modal-field select, .modal-field textarea {
-        font-size: 10px;
-        padding: 6px;
+        font-size: 8px;
+        padding: 4px;
     }
 
     .notification {
-        padding: 6px 12px;
-        font-size: 10px;
+        padding: 4px 10px;
+        font-size: 8px;
     }
 }

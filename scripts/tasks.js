@@ -159,15 +159,26 @@ class TaskManager {
         if (addButton) {
             addButton.addEventListener('click', () => Modal.showTaskForm());
             if (window.Telegram?.WebApp) {
-                addButton.addEventListener('touchstart', () => Modal.showTaskForm());
+                addButton.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Предотвращаем стандартное поведение
+                    Modal.showTaskForm();
+                }, { passive: false });
             }
         }
 
-        tasksContainer.querySelectorAll('.task-checkbox').forEach(checkbox => {
+        document.querySelectorAll('.task-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
                 const id = parseInt(e.target.closest('.task-card').dataset.id);
                 this.toggleTask(id);
             });
+            if (window.Telegram?.WebApp) {
+                checkbox.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    checkbox.checked = !checkbox.checked;
+                    const id = parseInt(e.target.closest('.task-card').dataset.id);
+                    this.toggleTask(id);
+                }, { passive: false });
+            }
         });
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
@@ -175,6 +186,13 @@ class TaskManager {
                 const id = parseInt(e.target.dataset.id);
                 this.deleteTask(id);
             });
+            if (window.Telegram?.WebApp) {
+                btn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    const id = parseInt(e.target.dataset.id);
+                    this.deleteTask(id);
+                }, { passive: false });
+            }
         });
 
         document.querySelectorAll('.task-card').forEach(card => {
@@ -188,11 +206,12 @@ class TaskManager {
             if (window.Telegram?.WebApp) {
                 card.addEventListener('touchstart', (e) => {
                     if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-btn')) {
+                        e.preventDefault();
                         const id = parseInt(card.dataset.id);
                         const task = this.activeTasks.find(t => t.id === id) || this.completedTasks.find(t => t.id === id);
                         if (task) Modal.showEditTaskForm(task);
                     }
-                });
+                }, { passive: false });
             }
         });
     }
@@ -204,9 +223,11 @@ class TaskManager {
 
         const handleDragStart = (e) => {
             const taskCard = e.target.closest('.task-card');
-            if (taskCard) {
+            if (taskCard && !window.Telegram?.WebApp) { // Drag and Drop только для ПК
                 e.dataTransfer.setData('text/plain', taskCard.dataset.id);
                 taskCard.classList.add('dragging');
+            } else if (window.Telegram?.WebApp) {
+                this.handleTouchDragStart(taskCard);
             }
         };
 
@@ -228,7 +249,7 @@ class TaskManager {
             const targetContainer = e.target.closest('.task-list') || e.target.closest('#completed-list');
             const isCompleted = targetContainer.id === 'completed-list';
 
-            if (draggedTask && targetContainer) {
+            if (draggedTask && targetContainer && !window.Telegram?.WebApp) {
                 const draggedTaskData = this.activeTasks.find(task => task.id === parseInt(id)) || this.completedTasks.find(task => task.id === parseInt(id));
                 if (draggedTaskData) {
                     if (isCompleted && this.activeTasks.includes(draggedTaskData)) {
@@ -254,6 +275,68 @@ class TaskManager {
         completedList.addEventListener('dragend', handleDragEnd);
         completedList.addEventListener('dragover', handleDragOver);
         completedList.addEventListener('drop', handleDrop);
+
+        if (window.Telegram?.WebApp) {
+            this.setupTouchDragAndDrop();
+        }
+    }
+
+    setupTouchDragAndDrop() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let draggedTask = null;
+
+        document.querySelectorAll('.task-card').forEach(card => {
+            card.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                draggedTask = card;
+                draggedTask.classList.add('dragging');
+            }, { passive: true });
+
+            card.addEventListener('touchmove', (e) => {
+                if (draggedTask) {
+                    const touchX = e.touches[0].clientX;
+                    const touchY = e.touches[0].clientY;
+                    const deltaX = touchX - touchStartX;
+                    const deltaY = touchY - touchStartY;
+                    if (Math.abs(deltaY) > 10) { // Минимальное расстояние для перетаскивания
+                        draggedTask.style.position = 'absolute';
+                        draggedTask.style.left = `${touchX - draggedTask.offsetWidth / 2}px`;
+                        draggedTask.style.top = `${touchY - draggedTask.offsetHeight / 2}px`;
+                    }
+                }
+            }, { passive: true });
+
+            card.addEventListener('touchend', (e) => {
+                if (draggedTask) {
+                    const touchEndY = e.changedTouches[0].clientY;
+                    const targetContainer = document.elementFromPoint(e.changedTouches[0].clientX, touchEndY).closest('.task-list') || document.elementFromPoint(e.changedTouches[0].clientX, touchEndY).closest('#completed-list');
+                    const isCompleted = targetContainer && targetContainer.id === 'completed-list';
+                    const id = parseInt(draggedTask.dataset.id);
+                    const draggedTaskData = this.activeTasks.find(task => task.id === id) || this.completedTasks.find(task => task.id === id);
+
+                    if (draggedTaskData && targetContainer) {
+                        if (isCompleted && this.activeTasks.includes(draggedTaskData)) {
+                            draggedTaskData.completed = true;
+                            this.completedTasks.push(this.activeTasks.splice(this.activeTasks.indexOf(draggedTaskData), 1)[0]);
+                        } else if (!isCompleted && this.completedTasks.includes(draggedTaskData)) {
+                            draggedTaskData.completed = false;
+                            this.activeTasks.push(this.completedTasks.splice(this.completedTasks.indexOf(draggedTaskData), 1)[0]);
+                        }
+                        Storage.save('tasks', this.activeTasks);
+                        Storage.save('completed', this.completedTasks);
+                        this.render();
+                    }
+
+                    draggedTask.style.position = '';
+                    draggedTask.style.left = '';
+                    draggedTask.style.top = '';
+                    draggedTask.classList.remove('dragging');
+                    draggedTask = null;
+                }
+            }, { passive: true });
+        });
     }
 }
 
