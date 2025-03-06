@@ -164,6 +164,7 @@ class TaskManager {
             if (window.Telegram?.WebApp) {
                 addButton.addEventListener('touchend', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     Modal.showTaskForm();
                 }, { passive: false });
             }
@@ -177,7 +178,7 @@ class TaskManager {
             if (window.Telegram?.WebApp) {
                 checkbox.addEventListener('touchstart', (e) => {
                     e.preventDefault();
-                    e.stopPropagation(); // Останавливаем всплытие события
+                    e.stopPropagation();
                     const id = parseInt(e.target.closest('.task-card').dataset.id);
                     checkbox.checked = !checkbox.checked;
                     this.toggleTask(id);
@@ -187,7 +188,7 @@ class TaskManager {
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Предотвращаем открытие модального окна
+                e.stopPropagation();
                 const id = parseInt(e.target.dataset.id);
                 this.deleteTask(id);
             });
@@ -202,6 +203,7 @@ class TaskManager {
         });
 
         document.querySelectorAll('.task-card').forEach(card => {
+            let touchTimer;
             card.addEventListener('click', (e) => {
                 if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-btn')) {
                     const id = parseInt(card.dataset.id);
@@ -210,14 +212,25 @@ class TaskManager {
                 }
             });
             if (window.Telegram?.WebApp) {
-                card.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-btn')) {
-                        const id = parseInt(card.dataset.id);
-                        const task = this.activeTasks.find(t => t.id === id) || this.completedTasks.find(t => t.id === id);
-                        if (task) Modal.showEditTaskForm(task);
-                    }
+                card.addEventListener('touchstart', (e) => {
+                    touchTimer = setTimeout(() => {
+                        if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-btn')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const id = parseInt(card.dataset.id);
+                            const task = this.activeTasks.find(t => t.id === id) || this.completedTasks.find(t => t.id === id);
+                            if (task) Modal.showEditTaskForm(task);
+                        }
+                    }, 300); // Задержка для предотвращения конфликта с Drag and Drop
                 }, { passive: false });
+
+                card.addEventListener('touchend', (e) => {
+                    clearTimeout(touchTimer);
+                }, { passive: false });
+
+                card.addEventListener('touchmove', () => {
+                    clearTimeout(touchTimer);
+                }, { passive: true });
             }
         });
     }
@@ -229,7 +242,7 @@ class TaskManager {
 
         const handleDragStart = (e) => {
             const taskCard = e.target.closest('.task-card');
-            if (taskCard && !window.Telegram?.WebApp) { // Drag and Drop только для ПК
+            if (taskCard && !window.Telegram?.WebApp) {
                 e.dataTransfer.setData('text/plain', taskCard.dataset.id);
                 taskCard.classList.add('dragging');
             }
@@ -304,7 +317,7 @@ class TaskManager {
                     const touchY = e.touches[0].clientY;
                     const deltaX = touchX - touchStartX;
                     const deltaY = touchY - touchStartY;
-                    if (Math.abs(deltaY) > 10) { // Минимальное расстояние для перетаскивания
+                    if (Math.abs(deltaY) > 10) {
                         draggedTask.style.position = 'absolute';
                         draggedTask.style.left = `${touchX - draggedTask.offsetWidth / 2}px`;
                         draggedTask.style.top = `${touchY - draggedTask.offsetHeight / 2}px`;

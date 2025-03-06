@@ -3,6 +3,7 @@ class Modal {
         const modal = document.getElementById('modal');
         if (!modal) {
             console.error('Modal container not found');
+            document.getElementById('debug').textContent = 'Ошибка: Modal container not found';
             return;
         }
 
@@ -106,6 +107,7 @@ class Modal {
         const modal = document.getElementById('modal');
         if (!modal) {
             console.error('Modal container not found');
+            document.getElementById('debug').textContent = 'Ошибка: Modal container not found';
             return;
         }
 

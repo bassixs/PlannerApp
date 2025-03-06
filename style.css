@@ -38,8 +38,7 @@ body {
     height: 100vh;
     overflow: hidden;
     color: #333;
-    touch-action: manipulation;
-    -webkit-user-select: none; /* Отключение выделения текста */
+    -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
@@ -164,7 +163,6 @@ body {
     flex-direction: column;
     gap: 8px;
     position: relative;
-    touch-action: auto; /* Разрешаем touch для карточек */
 }
 
 .task-card {
@@ -194,7 +192,9 @@ body {
     cursor: pointer;
     margin-right: 8px;
     -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+    touch-action: auto; /* Разрешаем touch для чекбоксов */
+    width: 20px; /* Увеличиваем область касания */
+    height: 20px;
 }
 
 .delete-btn {
@@ -309,8 +309,9 @@ button:hover {
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    overflow-y: auto; /* Поддержка прокрутки модального окна */
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    touch-action: auto; /* Разрешаем touch для модального окна */
 }
 
 .modal.active {
@@ -328,7 +329,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    touch-action: auto; /* Разрешаем touch внутри модального окна */
+    touch-action: auto;
 }
 
 .modal-card h3 {
