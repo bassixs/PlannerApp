@@ -160,7 +160,7 @@ body {
 }
 
 .task-card {
-    transition: background 0.3s ease, opacity 0.3s ease;
+    transition: background 0.3s ease, opacity 0.3s ease, transform 0.5s ease;
     cursor: move; /* Указатель для Drag and Drop */
 }
 
@@ -168,6 +168,11 @@ body {
     background: rgba(144, 238, 144, 0.2); /* Светло-зеленый фон для завершенных задач */
     text-decoration: line-through;
     opacity: 0.7;
+    animation: completeTask 0.5s ease forwards;
+}
+
+.task-card.dragging {
+    opacity: 0.5;
 }
 
 .task-card:hover {
@@ -223,7 +228,7 @@ body {
 }
 
 .priority-low { background: #90ee90; color: #333; } /* Светло-зеленый */
-.priority-medium { background: #B19CD9; color: #333; } /* Светло-фиолетовый (новый цвет) */
+.priority-medium { background: #B19CD9; color: #333; } /* Светло-фиолетовый */
 .priority-high { background: #ff6347; color: white; } /* Томатный */
 
 .description, .status, .assignee, .location, .tags {
@@ -380,6 +385,12 @@ button:hover {
     z-index: 1001;
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+@keyframes completeTask {
+    0% { transform: scale(1); background: rgba(255, 255, 255, 0.9); }
+    50% { transform: scale(1.1); background: rgba(144, 238, 144, 0.5); }
+    100% { transform: scale(1); background: rgba(144, 238, 144, 0.2); }
 }
 
 @media (max-width: 600px) {
