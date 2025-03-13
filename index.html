@@ -41,12 +41,11 @@
     <script src="scripts/tabs.js" defer></script>
     <script>
         window.onload = () => {
+            console.log('All scripts loaded');
             if (window.Telegram?.WebApp) {
                 Telegram.WebApp.expand();
                 Telegram.WebApp.enableClosingConfirmation();
-                // Отключаем кеширование Telegram
                 Telegram.WebApp.setHeaderColor('#ffffff');
-                // Отключаем вертикальные свайпы, чтобы не мешать перетаскиванию
                 Telegram.WebApp.disableVerticalSwipes();
                 console.log('Telegram Web App initialized');
             }

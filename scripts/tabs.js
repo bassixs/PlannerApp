@@ -1,43 +1,49 @@
 document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.tab');
-    if (tabs.length === 0) {
-        console.error('No tabs found');
-        return;
-    }
+    const tabContents = document.querySelectorAll('.tab-content');
+
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            console.log('Tab clicked:', tab.dataset.tab);
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
+            const tabId = tab.dataset.tab;
+
+            // Деактивируем все вкладки и контент
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(tc => tc.classList.remove('active'));
+
+            // Активируем выбранную вкладку и контент
             tab.classList.add('active');
-            const tabContent = document.getElementById(tab.dataset.tab);
-            if (tabContent) {
-                setTimeout(() => {
-                    tabContent.classList.add('active');
-                    console.log('Tab content activated:', tab.dataset.tab);
-                }, 10); // Задержка для анимации
+            const content = document.getElementById(tabId);
+            if (content) {
+                content.classList.add('active');
+                console.log(`Tab clicked: ${tabId}`);
+                console.log(`Tab content activated: ${tabId}`);
             } else {
-                console.error('Tab content not found:', tab.dataset.tab);
+                console.error(`Content for tab ${tabId} not found`);
+                document.getElementById('debug').textContent = `Ошибка: Контент для вкладки ${tabId} не найден`;
             }
         });
+
+        // Обработка touch для Telegram Web App
         if (window.Telegram?.WebApp) {
-            tab.addEventListener('touchstart', () => {
-                console.log('Tab touched:', tab.dataset.tab);
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
+            tab.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const tabId = tab.dataset.tab;
+
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+
                 tab.classList.add('active');
-                const tabContent = document.getElementById(tab.dataset.tab);
-                if (tabContent) {
-                    setTimeout(() => {
-                        tabContent.classList.add('active');
-                        console.log('Tab content activated (touch):', tab.dataset.tab);
-                    }, 10);
+                const content = document.getElementById(tabId);
+                if (content) {
+                    content.classList.add('active');
+                    console.log(`Tab clicked: ${tabId}`);
+                    console.log(`Tab content activated: ${tabId}`);
                 } else {
-                    console.error('Tab content not found (touch):', tab.dataset.tab);
+                    console.error(`Content for tab ${tabId} not found`);
+                    document.getElementById('debug').textContent = `Ошибка: Контент для вкладки ${tabId} не найден`;
                 }
-            });
+            }, { passive: false });
         }
     });
 });
