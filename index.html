@@ -2,96 +2,54 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Планировщик</title>
-    <link rel="stylesheet" href="/PlannerApp/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1 id="userGreeting">Привет, <span id="userName">Пользователь</span></h1>
-            <button class="create-btn" id="create-task-btn">+ Добавить задачу</button>
-        </header>
+        <div class="header">
+            <h1>Планировщик</h1>
+            <button class="create-btn">Создать</button>
+        </div>
         <div class="sidebar">
             <div class="tabs">
                 <button class="tab active" data-tab="tasks"><i class="fas fa-tasks"></i></button>
-                <button class="tab" data-tab="habits"><i class="fas fa-recycle"></i></button>
+                <button class="tab" data-tab="habits"><i class="fas fa-leaf"></i></button>
                 <button class="tab" data-tab="goals"><i class="fas fa-bullseye"></i></button>
                 <button class="tab" data-tab="calendar"><i class="fas fa-calendar-alt"></i></button>
-                <button class="tab" data-tab="completed"><i class="fas fa-check-double"></i></button>
             </div>
         </div>
         <div class="content">
-            <div id="tasks" class="tab-content active">
-                <!-- Активные задачи будут рендериться здесь -->
-            </div>
-            <div id="habits" class="tab-content">
-                <!-- Привычки будут рендериться здесь -->
-            </div>
-            <div id="goals" class="tab-content">
-                <!-- Цели будут рендериться здесь -->
-            </div>
-            <div id="calendar" class="tab-content">
-                <!-- Календарь будет рендериться здесь -->
-            </div>
-            <div id="completed" class="tab-content">
-                <!-- Завершенные задачи будут рендериться здесь -->
-            </div>
+            <div class="tab-content active" id="tasks"></div>
+            <div class="tab-content" id="habits"></div>
+            <div class="tab-content" id="goals"></div>
+            <div class="tab-content" id="calendar"></div>
         </div>
     </div>
     <div id="modal" class="modal"></div>
-    <div id="debug" style="position: fixed; bottom: 0; left: 0; background: rgba(0,0,0,0.7); color: white; padding: 5px; font-size: 12px; z-index: 2000;"></div>
+    <div id="debug" style="position: fixed; bottom: 10px; left: 10px; background: #fff; padding: 5px; border: 1px solid #ccc; z-index: 1000;"></div>
 
-    <script src="/PlannerApp/scripts/storage.js" defer></script>
-    <script src="/PlannerApp/scripts/tasks.js" defer></script>
-    <script src="/PlannerApp/scripts/habits.js" defer></script>
-    <script src="/PlannerApp/scripts/goals.js" defer></script>
-    <script src="/PlannerApp/scripts/calendar.js" defer></script>
-    <script src="/PlannerApp/scripts/modal.js" defer></script>
-    <script src="/PlannerApp/scripts/notifications.js" defer></script>
-    <script src="/PlannerApp/scripts/tabs.js" defer></script>
+    <script src="scripts/storage.js" defer></script>
+    <script src="scripts/tasks.js" defer></script>
+    <script src="scripts/habits.js" defer></script>
+    <script src="scripts/goals.js" defer></script>
+    <script src="scripts/calendar.js" defer></script>
+    <script src="scripts/modal.js" defer></script>
+    <script src="scripts/notifications.js" defer></script>
+    <script src="scripts/tabs.js" defer></script>
     <script>
         window.onload = () => {
             if (window.Telegram?.WebApp) {
-                Telegram.WebApp.ready();
                 Telegram.WebApp.expand();
-                console.log('Telegram Web App инициализирован');
-                Telegram.WebApp.MainButton.hide();
-                
-                // Установить имя пользователя из Telegram
-                const user = Telegram.WebApp.initDataUnsafe?.user;
-                if (user && user.first_name) {
-                    document.getElementById('userName').textContent = user.first_name;
-                }
-            } else {
-                console.log('Запуск вне Telegram');
-                document.getElementById('userName').textContent = 'Гость';
+                Telegram.WebApp.enableClosingConfirmation();
+                // Отключаем кеширование Telegram
+                Telegram.WebApp.setHeaderColor('#ffffff');
+                // Отключаем вертикальные свайпы, чтобы не мешать перетаскиванию
+                Telegram.WebApp.disableVerticalSwipes();
+                console.log('Telegram Web App initialized');
             }
-
-            try {
-                if (typeof taskManager !== 'undefined' && taskManager.render) {
-                    taskManager.render();
-                }
-                if (typeof habitManager !== 'undefined' && habitManager.render) {
-                    habitManager.render();
-                }
-                if (typeof goalManager !== 'undefined' && goalManager.render) {
-                    goalManager.render();
-                }
-                if (typeof calendar !== 'undefined' && calendar.render) {
-                    calendar.render();
-                }
-            } catch (e) {
-                console.error('Ошибка инициализации менеджеров:', e);
-                document.getElementById('debug').textContent = 'Ошибка: ' + e.message;
-            }
-
-            // Логирование ошибок в div для мобильных устройств
-            window.addEventListener('error', (event) => {
-                document.getElementById('debug').textContent = 'Ошибка: ' + event.message;
-            });
         };
     </script>
 </body>

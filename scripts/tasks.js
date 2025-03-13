@@ -1,10 +1,31 @@
 class TaskManager {
     constructor() {
-        this.activeTasks = Storage.load('tasks') || [];
-        this.completedTasks = Storage.load('completed') || [];
+        this.activeTasks = this.migrateTasks(Storage.load('tasks')) || [];
+        this.completedTasks = this.migrateTasks(Storage.load('completed')) || [];
         console.log('TaskManager initialized with active tasks:', this.activeTasks);
         console.log('TaskManager initialized with completed tasks:', this.completedTasks);
         this.render();
+    }
+
+    // Метод миграции старых задач в новый формат
+    migrateTasks(tasks) {
+        if (!Array.isArray(tasks)) return [];
+
+        return tasks.map(task => {
+            // Проверяем и добавляем недостающие поля
+            return {
+                id: task.id || Date.now(),
+                description: task.description || 'Без названия',
+                dueDate: task.dueDate || '',
+                priority: task.priority || 'low',
+                taskDescription: task.taskDescription || '',
+                status: task.status || 'in-progress',
+                assignee: task.assignee || '',
+                location: task.location || '',
+                tags: task.tags || [],
+                completed: task.completed || false
+            };
+        });
     }
 
     addTask(description, dueDate, priority, taskDescription, status, assignee, location, tags) {
@@ -169,14 +190,14 @@ class TaskManager {
                 }, { passive: false });
             }
         }
-    
+
         document.querySelectorAll('.task-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
                 const id = parseInt(e.target.closest('.task-card').dataset.id);
                 this.toggleTask(id);
             });
             if (window.Telegram?.WebApp) {
-                checkbox.addEventListener('touchend', (e) => { // Заменим touchstart на touchend
+                checkbox.addEventListener('touchend', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     const id = parseInt(e.target.closest('.task-card').dataset.id);
@@ -185,7 +206,7 @@ class TaskManager {
                 }, { passive: false });
             }
         });
-    
+
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -201,7 +222,7 @@ class TaskManager {
                 }, { passive: false });
             }
         });
-    
+
         document.querySelectorAll('.task-card').forEach(card => {
             let touchTimer;
             card.addEventListener('click', (e) => {
@@ -229,11 +250,11 @@ class TaskManager {
                         }
                     }, 500);
                 }, { passive: false });
-        
+
                 card.addEventListener('touchend', (e) => {
                     clearTimeout(touchTimer);
                 }, { passive: false });
-        
+
                 card.addEventListener('touchmove', () => {
                     clearTimeout(touchTimer);
                 }, { passive: true });
