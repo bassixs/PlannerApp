@@ -169,14 +169,14 @@ class TaskManager {
                 }, { passive: false });
             }
         }
-
+    
         document.querySelectorAll('.task-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
                 const id = parseInt(e.target.closest('.task-card').dataset.id);
                 this.toggleTask(id);
             });
             if (window.Telegram?.WebApp) {
-                checkbox.addEventListener('touchstart', (e) => {
+                checkbox.addEventListener('touchend', (e) => { // Заменим touchstart на touchend
                     e.preventDefault();
                     e.stopPropagation();
                     const id = parseInt(e.target.closest('.task-card').dataset.id);
@@ -185,7 +185,7 @@ class TaskManager {
                 }, { passive: false });
             }
         });
-
+    
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -201,7 +201,7 @@ class TaskManager {
                 }, { passive: false });
             }
         });
-
+    
         document.querySelectorAll('.task-card').forEach(card => {
             let touchTimer;
             card.addEventListener('click', (e) => {
@@ -219,15 +219,21 @@ class TaskManager {
                             e.stopPropagation();
                             const id = parseInt(card.dataset.id);
                             const task = this.activeTasks.find(t => t.id === id) || this.completedTasks.find(t => t.id === id);
-                            if (task) Modal.showEditTaskForm(task);
+                            if (task) {
+                                console.log('Opening edit modal for task:', task);
+                                document.getElementById('debug').textContent = 'Открытие модального окна для редактирования';
+                                Modal.showEditTaskForm(task);
+                            } else {
+                                document.getElementById('debug').textContent = 'Ошибка: Задача не найдена';
+                            }
                         }
-                    }, 300); // Задержка для предотвращения конфликта с Drag and Drop
+                    }, 500);
                 }, { passive: false });
-
+        
                 card.addEventListener('touchend', (e) => {
                     clearTimeout(touchTimer);
                 }, { passive: false });
-
+        
                 card.addEventListener('touchmove', () => {
                     clearTimeout(touchTimer);
                 }, { passive: true });
@@ -303,6 +309,22 @@ class TaskManager {
         let touchStartY = 0;
         let draggedTask = null;
 
+        const reorderTasks = (draggedTask, targetTask, listType) => {
+            const draggedId = parseInt(draggedTask.dataset.id);
+            const targetId = parseInt(targetTask.dataset.id);
+            const list = listType === 'active' ? this.activeTasks : this.completedTasks;
+
+            const draggedIndex = list.findIndex(task => task.id === draggedId);
+            const targetIndex = list.findIndex(task => task.id === targetId);
+
+            if (draggedIndex !== -1 && targetIndex !== -1) {
+                const [draggedTaskData] = list.splice(draggedIndex, 1);
+                list.splice(targetIndex, 0, draggedTaskData);
+                Storage.save(listType === 'active' ? 'tasks' : 'completed', list);
+                this.render();
+            }
+        };
+
         document.querySelectorAll('.task-card').forEach(card => {
             card.addEventListener('touchstart', (e) => {
                 touchStartX = e.touches[0].clientX;
@@ -317,7 +339,7 @@ class TaskManager {
                     const touchY = e.touches[0].clientY;
                     const deltaX = touchX - touchStartX;
                     const deltaY = touchY - touchStartY;
-                    if (Math.abs(deltaY) > 10) {
+                    if (Math.abs(deltaY) > 10 || Math.abs(deltaX) > 10) {
                         draggedTask.style.position = 'absolute';
                         draggedTask.style.left = `${touchX - draggedTask.offsetWidth / 2}px`;
                         draggedTask.style.top = `${touchY - draggedTask.offsetHeight / 2}px`;
@@ -327,23 +349,34 @@ class TaskManager {
 
             card.addEventListener('touchend', (e) => {
                 if (draggedTask) {
+                    const touchEndX = e.changedTouches[0].clientX;
                     const touchEndY = e.changedTouches[0].clientY;
-                    const targetContainer = document.elementFromPoint(e.changedTouches[0].clientX, touchEndY).closest('.task-list') || document.elementFromPoint(e.changedTouches[0].clientX, touchEndY).closest('#completed-list');
+                    const targetContainer = document.elementFromPoint(touchEndX, touchEndY).closest('.task-list') || document.elementFromPoint(touchEndX, touchEndY).closest('#completed-list');
+                    const targetTask = document.elementFromPoint(touchEndX, touchEndY).closest('.task-card');
                     const isCompleted = targetContainer && targetContainer.id === 'completed-list';
                     const id = parseInt(draggedTask.dataset.id);
                     const draggedTaskData = this.activeTasks.find(task => task.id === id) || this.completedTasks.find(task => task.id === id);
 
                     if (draggedTaskData && targetContainer) {
+                        // Перенос между списками (Активные ↔ Завершённые)
                         if (isCompleted && this.activeTasks.includes(draggedTaskData)) {
                             draggedTaskData.completed = true;
                             this.completedTasks.push(this.activeTasks.splice(this.activeTasks.indexOf(draggedTaskData), 1)[0]);
+                            Storage.save('tasks', this.activeTasks);
+                            Storage.save('completed', this.completedTasks);
+                            this.render();
                         } else if (!isCompleted && this.completedTasks.includes(draggedTaskData)) {
                             draggedTaskData.completed = false;
                             this.activeTasks.push(this.completedTasks.splice(this.completedTasks.indexOf(draggedTaskData), 1)[0]);
+                            Storage.save('tasks', this.activeTasks);
+                            Storage.save('completed', this.completedTasks);
+                            this.render();
                         }
-                        Storage.save('tasks', this.activeTasks);
-                        Storage.save('completed', this.completedTasks);
-                        this.render();
+                        // Изменение порядка внутри списка
+                        else if (targetTask && targetTask !== draggedTask) {
+                            const listType = this.activeTasks.includes(draggedTaskData) ? 'active' : 'completed';
+                            reorderTasks(draggedTask, targetTask, listType);
+                        }
                     }
 
                     draggedTask.style.position = '';
