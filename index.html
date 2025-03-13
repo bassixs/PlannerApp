@@ -1,3 +1,6 @@
+index.html:
+
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -44,39 +47,8 @@
     <script src="scripts/notifications.js" defer></script>
     <script src="scripts/tabs.js" defer></script>
     <script>
-        function isDesktop() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isMobile = /mobile|android|iphone|ipad|tablet/i.test(userAgent);
-            const isWideScreen = window.screen.width > 1024; // Порог для "ПК"
-            return !isMobile && isWideScreen;
-        }
-
-        function adjustWindowSize() {
-            if (window.Telegram?.WebApp) {
-                // Telegram Web App: используем стандартное поведение
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
-                Telegram.WebApp.enableClosingConfirmation();
-                Telegram.WebApp.setHeaderColor('#ffffff');
-                Telegram.WebApp.disableVerticalSwipes();
-                console.log('Telegram Web App initialized');
-            } else if (isDesktop()) {
-                // Обычный браузер на ПК: задаем большой размер окна
-                document.body.classList.add('desktop-mode');
-                if (window.outerWidth < 1200 || window.outerHeight < 800) {
-                    window.resizeTo(1200, 800); // Устанавливаем размер 1200x800
-                }
-                console.log('Desktop mode activated');
-            } else {
-                // Мобильный браузер: оставляем как есть
-                console.log('Mobile browser mode');
-            }
-        }
-
         window.onload = () => {
             console.log('All scripts loaded');
-            adjustWindowSize();
-
             const taskList = document.getElementById('task-list');
             const completedContainer = document.getElementById('completed');
             if (!taskList || !completedContainer) {
@@ -88,6 +60,14 @@
             if (typeof Modal === 'undefined') {
                 console.error('Modal class is not defined');
                 document.getElementById('debug').textContent = 'Ошибка: Класс Modal не определён';
+            }
+            if (window.Telegram?.WebApp) {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+                Telegram.WebApp.enableClosingConfirmation();
+                Telegram.WebApp.setHeaderColor('#ffffff');
+                Telegram.WebApp.disableVerticalSwipes();
+                console.log('Telegram Web App initialized');
             }
         };
     </script>
