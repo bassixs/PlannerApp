@@ -9,8 +9,7 @@ class HabitManager {
             id: Date.now(),
             title,
             frequency,
-            streak: 0,
-            lastCompleted: null
+            progress: 0
         };
         this.habits.push(habit);
         Storage.save('habits', this.habits);
@@ -18,16 +17,22 @@ class HabitManager {
     }
 
     render() {
-        const container = document.getElementById('habits');
-        container.innerHTML = `
-            <button class="add-btn" onclick="Modal.showHabitForm()">Добавить привычку</button>
-            ${this.habits.map(habit => `
-                <div class="card">
-                    <span>${habit.title}</span>
-                    <small>Частота: ${habit.frequency}</small>
-                    <span>Серия: ${habit.streak}</span>
-                </div>
-            `).join('')}
+        const habitsContainer = document.getElementById('habits');
+        if (!habitsContainer) {
+            console.error('Habits container not found');
+            return;
+        }
+
+        habitsContainer.innerHTML = `
+            <div class="habit-list">
+                ${Array.isArray(this.habits) && this.habits.length ? this.habits.map(habit => `
+                    <div class="card habit-card" data-id="${habit.id}">
+                        <h3>${habit.title}</h3>
+                        <p>Частота: каждые ${habit.frequency} дней</p>
+                        <p>Прогресс: ${habit.progress}%</p>
+                    </div>
+                `).join('') : '<p>Нет привычек</p>'}
+            </div>
         `;
     }
 }

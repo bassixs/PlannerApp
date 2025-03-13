@@ -4,12 +4,12 @@ class GoalManager {
         this.render();
     }
 
-    addGoal(title, deadline) {
+    addGoal(title, dueDate) {
         const goal = {
             id: Date.now(),
             title,
-            deadline,
-            progress: 0
+            dueDate,
+            completed: false
         };
         this.goals.push(goal);
         Storage.save('goals', this.goals);
@@ -17,16 +17,21 @@ class GoalManager {
     }
 
     render() {
-        const container = document.getElementById('goals');
-        container.innerHTML = `
-            <button class="add-btn" onclick="Modal.showGoalForm()">Добавить цель</button>
-            ${this.goals.map(goal => `
-                <div class="card">
-                    <span>${goal.title}</span>
-                    <small>Срок: ${goal.deadline || 'Не указан'}</small>
-                    <span>Прогресс: ${goal.progress}%</span>
-                </div>
-            `).join('')}
+        const goalsContainer = document.getElementById('goals');
+        if (!goalsContainer) {
+            console.error('Goals container not found');
+            return;
+        }
+
+        goalsContainer.innerHTML = `
+            <div class="goal-list">
+                ${Array.isArray(this.goals) && this.goals.length ? this.goals.map(goal => `
+                    <div class="card goal-card ${goal.completed ? 'completed' : ''}" data-id="${goal.id}">
+                        <h3>${goal.title}</h3>
+                        <p>Срок: ${goal.dueDate || 'Не указан'}</p>
+                    </div>
+                `).join('') : '<p>Нет целей</p>'}
+            </div>
         `;
     }
 }

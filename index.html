@@ -42,6 +42,10 @@
     <script>
         window.onload = () => {
             console.log('All scripts loaded');
+            if (typeof Modal === 'undefined') {
+                console.error('Modal class is not defined');
+                document.getElementById('debug').textContent = 'Ошибка: Класс Modal не определён';
+            }
             if (window.Telegram?.WebApp) {
                 Telegram.WebApp.expand();
                 Telegram.WebApp.enableClosingConfirmation();
