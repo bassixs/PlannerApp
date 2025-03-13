@@ -22,7 +22,10 @@
             </div>
         </div>
         <div class="content">
-            <div class="tab-content active" id="tasks"></div>
+            <div class="tab-content active" id="tasks">
+                <div id="task-list"></div>
+                <div id="completed"></div>
+            </div>
             <div class="tab-content" id="habits"></div>
             <div class="tab-content" id="goals"></div>
             <div class="tab-content" id="calendar"></div>
@@ -43,11 +46,12 @@
         window.onload = () => {
             console.log('All scripts loaded');
             const tasksContainer = document.getElementById('tasks');
-            if (!tasksContainer) {
-                console.error('Tasks container not found in DOM');
-                document.getElementById('debug').textContent = 'Ошибка: Контейнер задач не найден в DOM';
+            const completedContainer = document.getElementById('completed');
+            if (!tasksContainer || !completedContainer) {
+                console.error('Tasks or completed container not found in DOM', { tasksContainer, completedContainer });
+                document.getElementById('debug').textContent = 'Ошибка: Контейнер задач или завершенных задач не найден в DOM';
             } else {
-                console.log('Tasks container found:', tasksContainer);
+                console.log('Tasks and completed containers found:', { tasksContainer, completedContainer });
             }
             if (typeof Modal === 'undefined') {
                 console.error('Modal class is not defined');

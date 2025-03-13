@@ -109,10 +109,23 @@ body {
 }
 
 /* Стили для списков задач */
-.task-list,
-#completed-list {
+#task-list,
+#completed {
     min-height: 100px;
     padding: 10px;
+}
+
+.task-list-inner {
+    min-height: 100px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+#completed h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
 }
 
 .card {

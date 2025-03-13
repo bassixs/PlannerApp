@@ -90,20 +90,20 @@ class TaskManager {
     }
 
     render() {
-        const tasksContainer = document.getElementById('tasks');
+        const taskList = document.getElementById('task-list');
         const completedContainer = document.getElementById('completed');
-        if (!tasksContainer || !completedContainer) {
-            console.error('Tasks or completed container not found:', { tasksContainer, completedContainer });
-            document.getElementById('debug').textContent = 'Ошибка: Контейнер задач или завершенных задач не найден';
+        if (!taskList || !completedContainer) {
+            console.error('Task list or completed container not found:', { taskList, completedContainer });
+            document.getElementById('debug').textContent = 'Ошибка: Список задач или контейнер завершенных задач не найден';
             return;
         }
         console.log('Rendering active tasks:', this.activeTasks);
         console.log('Rendering completed tasks:', this.completedTasks);
 
-        tasksContainer.innerHTML = `
+        taskList.innerHTML = `
             <button class="add-task-btn" id="add-task-btn">Добавить задачу</button>
-            <div class="task-list" id="task-list">
-                ${Array.isArray(this.activeTasks) ? this.activeTasks.map(task => `
+            <div class="task-list-inner">
+                ${Array.isArray(this.activeTasks) && this.activeTasks.length ? this.activeTasks.map(task => `
                     <div class="card task-card ${task.completed ? 'completed' : ''}" data-id="${task.id}" draggable="true">
                         <input type="checkbox" ${task.completed ? 'checked' : ''} class="task-checkbox">
                         <button class="delete-btn" data-id="${task.id}">Удалить</button>
@@ -123,8 +123,9 @@ class TaskManager {
         `;
 
         completedContainer.innerHTML = `
-            <div class="task-list" id="completed-list">
-                ${Array.isArray(this.completedTasks) ? this.completedTasks.map(task => `
+            <h4>Завершённые задачи</h4>
+            <div class="task-list-inner">
+                ${Array.isArray(this.completedTasks) && this.completedTasks.length ? this.completedTasks.map(task => `
                     <div class="card task-card completed" data-id="${task.id}" draggable="true">
                         <input type="checkbox" checked class="task-checkbox" disabled>
                         <button class="delete-btn" data-id="${task.id}">Удалить</button>
@@ -166,13 +167,13 @@ class TaskManager {
     }
 
     bindEvents() {
-        const tasksContainer = document.getElementById('tasks');
-        if (!tasksContainer) {
-            console.error('Tasks container not found for binding events');
+        const taskList = document.getElementById('task-list');
+        if (!taskList) {
+            console.error('Task list not found for binding events');
             return;
         }
 
-        const addButton = tasksContainer.querySelector('#add-task-btn');
+        const addButton = taskList.querySelector('#add-task-btn');
         if (addButton) {
             addButton.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -260,9 +261,9 @@ class TaskManager {
 
     setupDragAndDrop() {
         const taskList = document.getElementById('task-list');
-        const completedList = document.getElementById('completed-list');
-        if (!taskList || !completedList) {
-            console.error('Task list or completed list not found for drag and drop');
+        const completedContainer = document.getElementById('completed');
+        if (!taskList || !completedContainer) {
+            console.error('Task list or completed container not found for drag and drop');
             return;
         }
 
@@ -289,8 +290,8 @@ class TaskManager {
             e.preventDefault();
             const id = e.dataTransfer.getData('text/plain');
             const draggedTask = document.querySelector(`.task-card[data-id="${id}"]`);
-            const targetContainer = e.target.closest('.task-list') || e.target.closest('#completed-list');
-            const isCompleted = targetContainer && targetContainer.id === 'completed-list';
+            const targetContainer = e.target.closest('.task-list-inner') || e.target.closest('#completed');
+            const isCompleted = targetContainer && targetContainer.id === 'completed';
 
             if (draggedTask && targetContainer && !window.Telegram?.WebApp) {
                 const draggedTaskData = this.activeTasks.find(task => task.id === parseInt(id)) || this.completedTasks.find(task => task.id === parseInt(id));
@@ -309,15 +310,15 @@ class TaskManager {
             }
         };
 
-        taskList.addEventListener('dragstart', handleDragStart);
-        taskList.addEventListener('dragend', handleDragEnd);
-        taskList.addEventListener('dragover', handleDragOver);
-        taskList.addEventListener('drop', handleDrop);
+        taskList.querySelector('.task-list-inner').addEventListener('dragstart', handleDragStart);
+        taskList.querySelector('.task-list-inner').addEventListener('dragend', handleDragEnd);
+        taskList.querySelector('.task-list-inner').addEventListener('dragover', handleDragOver);
+        taskList.querySelector('.task-list-inner').addEventListener('drop', handleDrop);
 
-        completedList.addEventListener('dragstart', handleDragStart);
-        completedList.addEventListener('dragend', handleDragEnd);
-        completedList.addEventListener('dragover', handleDragOver);
-        completedList.addEventListener('drop', handleDrop);
+        completedContainer.querySelector('.task-list-inner').addEventListener('dragstart', handleDragStart);
+        completedContainer.querySelector('.task-list-inner').addEventListener('dragend', handleDragEnd);
+        completedContainer.querySelector('.task-list-inner').addEventListener('dragover', handleDragOver);
+        completedContainer.querySelector('.task-list-inner').addEventListener('drop', handleDrop);
 
         if (window.Telegram?.WebApp) {
             this.setupTouchDragAndDrop();
@@ -371,9 +372,10 @@ class TaskManager {
                 if (draggedTask) {
                     const touchEndX = e.changedTouches[0].clientX;
                     const touchEndY = e.changedTouches[0].clientY;
-                    const targetContainer = document.elementFromPoint(touchEndX, touchEndY).closest('.task-list') || document.elementFromPoint(touchEndX, touchEndY).closest('#completed-list');
+                    const targetContainer = document.elementFromPoint(touchEndX, touchEndY).closest('.task-list-inner') || document.elementFromPoint(touchEndX, touchEndY).closest('#completed');
                     const targetTask = document.elementFromPoint(touchEndX, touchEndY).closest('.task-card');
-                    const isCompleted = targetContainer && targetContainer.id === 'completed-list';
+                    const isCompleted = targetContainer && targetContainer.closest('#completed');
+
                     const id = parseInt(draggedTask.dataset.id);
                     const draggedTaskData = this.activeTasks.find(task => task.id === id) || this.completedTasks.find(task => task.id === id);
 
