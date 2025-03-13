@@ -19,8 +19,12 @@ class Modal {
                         <input type="text" name="description" required>
                     </div>
                     <div class="modal-field">
-                        <label><i class="fas fa-calendar-alt"></i> Срок</label>
-                        <input type="datetime-local" name="dueDate">
+                        <label><i class="fas fa-calendar-alt"></i> Срок (дата)</label>
+                        <input type="date" name="dueDate">
+                    </div>
+                    <div class="modal-field">
+                        <label><i class="fas fa-clock"></i> Время</label>
+                        <input type="time" name="dueTime">
                     </div>
                     <div class="modal-field">
                         <label><i class="fas fa-exclamation-circle"></i> Приоритет</label>
@@ -69,6 +73,7 @@ class Modal {
             taskManager.addTask(
                 formData.get('description'),
                 formData.get('dueDate'),
+                formData.get('dueTime'),
                 formData.get('priority'),
                 formData.get('taskDescription'),
                 formData.get('status'),
@@ -94,6 +99,7 @@ class Modal {
                 taskManager.addTask(
                     formData.get('description'),
                     formData.get('dueDate'),
+                    formData.get('dueTime'),
                     formData.get('priority'),
                     formData.get('taskDescription'),
                     formData.get('status'),
@@ -124,8 +130,12 @@ class Modal {
                         <input type="text" name="description" value="${task.description}" required>
                     </div>
                     <div class="modal-field">
-                        <label><i class="fas fa-calendar-alt"></i> Срок</label>
-                        <input type="datetime-local" name="dueDate" value="${task.dueDate || ''}">
+                        <label><i class="fas fa-calendar-alt"></i> Срок (дата)</label>
+                        <input type="date" name="dueDate" value="${task.dueDate || ''}">
+                    </div>
+                    <div class="modal-field">
+                        <label><i class="fas fa-clock"></i> Время</label>
+                        <input type="time" name="dueTime" value="${task.dueTime || ''}">
                     </div>
                     <div class="modal-field">
                         <label><i class="fas fa-exclamation-circle"></i> Приоритет</label>
@@ -174,6 +184,7 @@ class Modal {
             taskManager.editTask(task.id, {
                 description: formData.get('description'),
                 dueDate: formData.get('dueDate'),
+                dueTime: formData.get('dueTime'),
                 priority: formData.get('priority'),
                 taskDescription: formData.get('taskDescription'),
                 status: formData.get('status'),
@@ -199,6 +210,7 @@ class Modal {
                 taskManager.editTask(task.id, {
                     description: formData.get('description'),
                     dueDate: formData.get('dueDate'),
+                    dueTime: formData.get('dueTime'),
                     priority: formData.get('priority'),
                     taskDescription: formData.get('taskDescription'),
                     status: formData.get('status'),

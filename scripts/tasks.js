@@ -16,6 +16,7 @@ class TaskManager {
                 id: task.id || Date.now(),
                 description: task.description || 'Без названия',
                 dueDate: task.dueDate || '',
+                dueTime: task.dueTime || '',
                 priority: task.priority || 'low',
                 taskDescription: task.taskDescription || '',
                 status: task.status || 'in-progress',
@@ -27,11 +28,12 @@ class TaskManager {
         });
     }
 
-    addTask(description, dueDate, priority, taskDescription, status, assignee, location, tags) {
+    addTask(description, dueDate, dueTime, priority, taskDescription, status, assignee, location, tags) {
         const task = {
             id: Date.now(),
             description,
             dueDate,
+            dueTime,
             priority,
             taskDescription,
             status: status || 'in-progress',
@@ -43,7 +45,8 @@ class TaskManager {
         this.activeTasks.push(task);
         Storage.save('tasks', this.activeTasks);
         this.render();
-        Notifications.schedule(task.description, dueDate);
+        const fullDueDate = dueDate ? `${dueDate} ${dueTime || '00:00'}` : '';
+        Notifications.schedule(task.description, fullDueDate);
     }
 
     editTask(id, updatedTask) {
@@ -64,10 +67,8 @@ class TaskManager {
     toggleTask(id) {
         const activeTask = this.activeTasks.find(task => task.id === id);
         if (activeTask) {
-            activeTask.completed = !activeTask.completed;
-            if (activeTask.completed) {
-                this.completedTasks.push(this.activeTasks.splice(this.activeTasks.indexOf(activeTask), 1)[0]);
-            }
+            activeTask.completed = true;
+            this.completedTasks.push(this.activeTasks.splice(this.activeTasks.indexOf(activeTask), 1)[0]);
             Storage.save('tasks', this.activeTasks);
             Storage.save('completed', this.completedTasks);
             this.render();
@@ -92,9 +93,14 @@ class TaskManager {
     render() {
         const taskList = document.getElementById('task-list');
         const completedContainer = document.getElementById('completed');
-        if (!taskList || !completedContainer) {
-            console.error('Task list or completed container not found:', { taskList, completedContainer });
-            document.getElementById('debug').textContent = 'Ошибка: Список задач или контейнер завершенных задач не найден';
+        if (!taskList) {
+            console.error('Task list container not found:', { taskList });
+            document.getElementById('debug').textContent = 'Ошибка: Список задач не найден';
+            return;
+        }
+        if (!completedContainer) {
+            console.error('Completed container not found:', { completedContainer });
+            document.getElementById('debug').textContent = 'Ошибка: Контейнер завершенных задач не найден';
             return;
         }
         console.log('Rendering active tasks:', this.activeTasks);
@@ -104,12 +110,11 @@ class TaskManager {
             <button class="add-task-btn" id="add-task-btn">Добавить задачу</button>
             <div class="task-list-inner">
                 ${Array.isArray(this.activeTasks) && this.activeTasks.length ? this.activeTasks.map(task => `
-                    <div class="card task-card ${task.completed ? 'completed' : ''}" data-id="${task.id}" draggable="true">
-                        <input type="checkbox" ${task.completed ? 'checked' : ''} class="task-checkbox">
-                        <button class="delete-btn" data-id="${task.id}">Удалить</button>
+                    <div class="card task-card" data-id="${task.id}" draggable="true">
+                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked disabled' : ''}>
                         <div class="task-content">
                             <h3>${task.description}</h3>
-                            <small>Срок: ${task.dueDate || 'Не указан'}</small>
+                            <small>Срок: ${task.dueDate ? task.dueDate : 'Не указан'} ${task.dueTime ? `в ${task.dueTime}` : ''}</small>
                             <span class="priority priority-${task.priority}">Приоритет: ${this.translatePriority(task.priority)}</span>
                             ${task.taskDescription ? `<p class="description">Описание: ${task.taskDescription}</p>` : ''}
                             ${task.status ? `<p class="status">Статус: ${this.translateStatus(task.status)}</p>` : ''}
@@ -117,6 +122,7 @@ class TaskManager {
                             ${task.location ? `<p class="location">Площадка: ${task.location}</p>` : ''}
                             ${task.tags.length ? `<p class="tags">Метки: ${task.tags.join(', ')}</p>` : ''}
                         </div>
+                        <div class="delete-icon" data-id="${task.id}">&times;</div>
                     </div>
                 `).join('') : '<p>Нет активных задач</p>'}
             </div>
@@ -127,11 +133,10 @@ class TaskManager {
             <div class="task-list-inner">
                 ${Array.isArray(this.completedTasks) && this.completedTasks.length ? this.completedTasks.map(task => `
                     <div class="card task-card completed" data-id="${task.id}" draggable="true">
-                        <input type="checkbox" checked class="task-checkbox" disabled>
-                        <button class="delete-btn" data-id="${task.id}">Удалить</button>
+                        <input type="checkbox" class="task-checkbox" checked disabled>
                         <div class="task-content">
                             <h3>${task.description}</h3>
-                            <small>Срок: ${task.dueDate || 'Не указан'}</small>
+                            <small>Срок: ${task.dueDate ? task.dueDate : 'Не указан'} ${task.dueTime ? `в ${task.dueTime}` : ''}</small>
                             <span class="priority priority-${task.priority}">Приоритет: ${this.translatePriority(task.priority)}</span>
                             ${task.taskDescription ? `<p class="description">Описание: ${task.taskDescription}</p>` : ''}
                             ${task.status ? `<p class="status">Статус: ${this.translateStatus(task.status)}</p>` : ''}
@@ -139,6 +144,7 @@ class TaskManager {
                             ${task.location ? `<p class="location">Площадка: ${task.location}</p>` : ''}
                             ${task.tags.length ? `<p class="tags">Метки: ${task.tags.join(', ')}</p>` : ''}
                         </div>
+                        <div class="delete-icon" data-id="${task.id}">&times;</div>
                     </div>
                 `).join('') : '<p>Нет завершенных задач</p>'}
             </div>
@@ -198,20 +204,22 @@ class TaskManager {
                     e.preventDefault();
                     e.stopPropagation();
                     const id = parseInt(e.target.closest('.task-card').dataset.id);
-                    checkbox.checked = !checkbox.checked;
-                    this.toggleTask(id);
+                    if (!checkbox.disabled) {
+                        checkbox.checked = !checkbox.checked;
+                        this.toggleTask(id);
+                    }
                 }, { passive: false });
             }
         });
 
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.delete-icon').forEach(icon => {
+            icon.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const id = parseInt(e.target.dataset.id);
                 this.deleteTask(id);
             });
             if (window.Telegram?.WebApp) {
-                btn.addEventListener('touchend', (e) => {
+                icon.addEventListener('touchend', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     const id = parseInt(e.target.dataset.id);
@@ -223,7 +231,7 @@ class TaskManager {
         document.querySelectorAll('.task-card').forEach(card => {
             let touchTimer;
             card.addEventListener('click', (e) => {
-                if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-btn')) {
+                if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-icon')) {
                     const id = parseInt(card.dataset.id);
                     const task = this.activeTasks.find(t => t.id === id) || this.completedTasks.find(t => t.id === id);
                     if (task) Modal.showEditTaskForm(task);
@@ -232,7 +240,7 @@ class TaskManager {
             if (window.Telegram?.WebApp) {
                 card.addEventListener('touchstart', (e) => {
                     touchTimer = setTimeout(() => {
-                        if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-btn')) {
+                        if (!e.target.classList.contains('task-checkbox') && !e.target.classList.contains('delete-icon')) {
                             e.preventDefault();
                             e.stopPropagation();
                             const id = parseInt(card.dataset.id);
@@ -290,8 +298,8 @@ class TaskManager {
             e.preventDefault();
             const id = e.dataTransfer.getData('text/plain');
             const draggedTask = document.querySelector(`.task-card[data-id="${id}"]`);
-            const targetContainer = e.target.closest('.task-list-inner') || e.target.closest('#completed');
-            const isCompleted = targetContainer && targetContainer.id === 'completed';
+            const targetContainer = e.target.closest('.task-list-inner') || e.target.closest('#completed .task-list-inner');
+            const isCompleted = targetContainer && targetContainer.closest('#completed');
 
             if (draggedTask && targetContainer && !window.Telegram?.WebApp) {
                 const draggedTaskData = this.activeTasks.find(task => task.id === parseInt(id)) || this.completedTasks.find(task => task.id === parseInt(id));
@@ -372,7 +380,7 @@ class TaskManager {
                 if (draggedTask) {
                     const touchEndX = e.changedTouches[0].clientX;
                     const touchEndY = e.changedTouches[0].clientY;
-                    const targetContainer = document.elementFromPoint(touchEndX, touchEndY).closest('.task-list-inner') || document.elementFromPoint(touchEndX, touchEndY).closest('#completed');
+                    const targetContainer = document.elementFromPoint(touchEndX, touchEndY).closest('.task-list-inner') || document.elementFromPoint(touchEndX, touchEndY).closest('#completed .task-list-inner');
                     const targetTask = document.elementFromPoint(touchEndX, touchEndY).closest('.task-card');
                     const isCompleted = targetContainer && targetContainer.closest('#completed');
 

@@ -19,16 +19,17 @@
                 <button class="tab" data-tab="habits"><i class="fas fa-leaf"></i></button>
                 <button class="tab" data-tab="goals"><i class="fas fa-bullseye"></i></button>
                 <button class="tab" data-tab="calendar"><i class="fas fa-calendar-alt"></i></button>
+                <button class="tab" data-tab="completed" style="margin-top: auto;"><i class="fas fa-check-circle"></i></button>
             </div>
         </div>
         <div class="content">
             <div class="tab-content active" id="tasks">
                 <div id="task-list"></div>
-                <div id="completed"></div>
             </div>
             <div class="tab-content" id="habits"></div>
             <div class="tab-content" id="goals"></div>
             <div class="tab-content" id="calendar"></div>
+            <div class="tab-content" id="completed"></div>
         </div>
     </div>
     <div id="modal" class="modal"></div>
@@ -45,13 +46,13 @@
     <script>
         window.onload = () => {
             console.log('All scripts loaded');
-            const tasksContainer = document.getElementById('tasks');
+            const taskList = document.getElementById('task-list');
             const completedContainer = document.getElementById('completed');
-            if (!tasksContainer || !completedContainer) {
-                console.error('Tasks or completed container not found in DOM', { tasksContainer, completedContainer });
-                document.getElementById('debug').textContent = 'Ошибка: Контейнер задач или завершенных задач не найден в DOM';
+            if (!taskList || !completedContainer) {
+                console.error('Task list or completed container not found in DOM', { taskList, completedContainer });
+                document.getElementById('debug').textContent = 'Ошибка: Список задач или контейнер завершенных задач не найден в DOM';
             } else {
-                console.log('Tasks and completed containers found:', { tasksContainer, completedContainer });
+                console.log('Task and completed containers found:', { taskList, completedContainer });
             }
             if (typeof Modal === 'undefined') {
                 console.error('Modal class is not defined');
