@@ -42,11 +42,19 @@
     <script>
         window.onload = () => {
             console.log('All scripts loaded');
+            const tasksContainer = document.getElementById('tasks');
+            if (!tasksContainer) {
+                console.error('Tasks container not found in DOM');
+                document.getElementById('debug').textContent = 'Ошибка: Контейнер задач не найден в DOM';
+            } else {
+                console.log('Tasks container found:', tasksContainer);
+            }
             if (typeof Modal === 'undefined') {
                 console.error('Modal class is not defined');
                 document.getElementById('debug').textContent = 'Ошибка: Класс Modal не определён';
             }
             if (window.Telegram?.WebApp) {
+                Telegram.WebApp.ready();
                 Telegram.WebApp.expand();
                 Telegram.WebApp.enableClosingConfirmation();
                 Telegram.WebApp.setHeaderColor('#ffffff');
