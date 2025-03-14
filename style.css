@@ -287,20 +287,26 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 2000;
+    overflow-y: auto; /* Добавляем прокрутку фона, если модальное окно выходит за пределы экрана */
 }
 
 .modal.active {
-    display: block;
+    display: flex; /* Изменяем на flex для центрирования */
+    justify-content: center;
+    align-items: flex-start; /* Выравниваем по верху, чтобы прокрутка работала корректно */
+    padding: 20px 0; /* Добавляем отступы сверху и снизу */
 }
 
 .modal-card {
     background: #ffffff;
     width: 90%;
     max-width: 400px;
+    max-height: 80vh; /* Ограничиваем максимальную высоту (80% от высоты экрана) */
     margin: 50px auto;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto; /* Включаем прокрутку внутри карточки */
 }
 
 .modal-card h3 {
@@ -416,6 +422,7 @@ body {
         width: 95%;
         margin: 20px auto;
         padding: 15px;
+        max-height: 70vh; /* Уменьшаем высоту на маленьких экранах */
     }
 }
 
