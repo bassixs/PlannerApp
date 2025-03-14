@@ -50,12 +50,13 @@ class Modal {
                         <input type="text" name="assignee">
                     </div>
                     <div class="modal-field">
-                        <label><i class="fas fa-map-marker-alt"></i> Площадка</label>
-                        <input type="text" name="location">
-                    </div>
-                    <div class="modal-field">
-                        <label><i class="fas fa-tags"></i> Метки (через запятую)</label>
-                        <input type="text" name="tags">
+                        <label><i class="fas fa-repeat"></i> Периодичность</label>
+                        <select name="recurrence">
+                            <option value="none">Однократно</option>
+                            <option value="daily">Ежедневно</option>
+                            <option value="weekly">Еженедельно</option>
+                            <option value="monthly">Ежемесячно</option>
+                        </select>
                     </div>
                     <div class="modal-buttons">
                         <button type="submit" class="add-btn">Добавить</button>
@@ -78,8 +79,7 @@ class Modal {
                 formData.get('taskDescription'),
                 formData.get('status'),
                 formData.get('assignee'),
-                formData.get('location'),
-                formData.get('tags')
+                formData.get('recurrence')
             );
             modal.classList.remove('active');
         });
@@ -104,8 +104,7 @@ class Modal {
                     formData.get('taskDescription'),
                     formData.get('status'),
                     formData.get('assignee'),
-                    formData.get('location'),
-                    formData.get('tags')
+                    formData.get('recurrence')
                 );
                 modal.classList.remove('active');
             }, { passive: false });
@@ -161,12 +160,13 @@ class Modal {
                         <input type="text" name="assignee" value="${task.assignee || ''}">
                     </div>
                     <div class="modal-field">
-                        <label><i class="fas fa-map-marker-alt"></i> Площадка</label>
-                        <input type="text" name="location" value="${task.location || ''}">
-                    </div>
-                    <div class="modal-field">
-                        <label><i class="fas fa-tags"></i> Метки (через запятую)</label>
-                        <input type="text" name="tags" value="${task.tags.join(', ') || ''}">
+                        <label><i class="fas fa-repeat"></i> Периодичность</label>
+                        <select name="recurrence">
+                            <option value="none" ${task.recurrence === 'none' ? 'selected' : ''}>Однократно</option>
+                            <option value="daily" ${task.recurrence === 'daily' ? 'selected' : ''}>Ежедневно</option>
+                            <option value="weekly" ${task.recurrence === 'weekly' ? 'selected' : ''}>Еженедельно</option>
+                            <option value="monthly" ${task.recurrence === 'monthly' ? 'selected' : ''}>Ежемесячно</option>
+                        </select>
                     </div>
                     <div class="modal-buttons">
                         <button type="submit" class="edit-btn">Сохранить</button>
@@ -189,8 +189,7 @@ class Modal {
                 taskDescription: formData.get('taskDescription'),
                 status: formData.get('status'),
                 assignee: formData.get('assignee'),
-                location: formData.get('location'),
-                tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag)
+                recurrence: formData.get('recurrence')
             });
             modal.classList.remove('active');
         });
@@ -215,8 +214,7 @@ class Modal {
                     taskDescription: formData.get('taskDescription'),
                     status: formData.get('status'),
                     assignee: formData.get('assignee'),
-                    location: formData.get('location'),
-                    tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag)
+                    recurrence: formData.get('recurrence')
                 });
                 modal.classList.remove('active');
             }, { passive: false });

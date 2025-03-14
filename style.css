@@ -193,7 +193,8 @@ body {
 .status,
 .assignee,
 .location,
-.tags {
+.tags,
+.recurrence {
     font-size: 12px;
     color: #555;
     margin-top: 5px;
@@ -287,26 +288,26 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 2000;
-    overflow-y: auto; /* Добавляем прокрутку фона, если модальное окно выходит за пределы экрана */
+    overflow-y: auto;
 }
 
 .modal.active {
-    display: flex; /* Изменяем на flex для центрирования */
+    display: flex;
     justify-content: center;
-    align-items: flex-start; /* Выравниваем по верху, чтобы прокрутка работала корректно */
-    padding: 20px 0; /* Добавляем отступы сверху и снизу */
+    align-items: flex-start;
+    padding: 20px 0;
 }
 
 .modal-card {
     background: #ffffff;
     width: 90%;
     max-width: 400px;
-    max-height: 80vh; /* Ограничиваем максимальную высоту (80% от высоты экрана) */
+    max-height: 80vh;
     margin: 50px auto;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    overflow-y: auto; /* Включаем прокрутку внутри карточки */
+    overflow-y: auto;
 }
 
 .modal-card h3 {
@@ -422,7 +423,7 @@ body {
         width: 95%;
         margin: 20px auto;
         padding: 15px;
-        max-height: 70vh; /* Уменьшаем высоту на маленьких экранах */
+        max-height: 70vh;
     }
 }
 

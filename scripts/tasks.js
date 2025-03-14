@@ -7,7 +7,6 @@ class TaskManager {
         this.render();
     }
 
-    // Метод миграции старых задач в новый формат
     migrateTasks(tasks) {
         if (!Array.isArray(tasks)) return [];
 
@@ -21,14 +20,13 @@ class TaskManager {
                 taskDescription: task.taskDescription || '',
                 status: task.status || 'in-progress',
                 assignee: task.assignee || '',
-                location: task.location || '',
-                tags: task.tags || [],
+                recurrence: task.recurrence || 'none',
                 completed: task.completed || false
             };
         });
     }
 
-    addTask(description, dueDate, dueTime, priority, taskDescription, status, assignee, location, tags) {
+    addTask(description, dueDate, dueTime, priority, taskDescription, status, assignee, recurrence) {
         const task = {
             id: Date.now(),
             description,
@@ -38,8 +36,7 @@ class TaskManager {
             taskDescription,
             status: status || 'in-progress',
             assignee: assignee || '',
-            location: location || '',
-            tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag) || [],
+            recurrence: recurrence || 'none',
             completed: false
         };
         this.activeTasks.push(task);
@@ -71,6 +68,20 @@ class TaskManager {
             this.completedTasks.push(this.activeTasks.splice(this.activeTasks.indexOf(activeTask), 1)[0]);
             Storage.save('tasks', this.activeTasks);
             Storage.save('completed', this.completedTasks);
+
+            if (activeTask.recurrence !== 'none') {
+                const newDueDate = this.calculateNextDueDate(activeTask.dueDate, activeTask.recurrence);
+                this.addTask(
+                    activeTask.description,
+                    newDueDate,
+                    activeTask.dueTime,
+                    activeTask.priority,
+                    activeTask.taskDescription,
+                    activeTask.status,
+                    activeTask.assignee,
+                    activeTask.recurrence
+                );
+            }
             this.render();
         }
     }
@@ -90,68 +101,21 @@ class TaskManager {
         this.render();
     }
 
-    render() {
-        const taskList = document.getElementById('task-list');
-        const completedContainer = document.getElementById('completed');
-        if (!taskList) {
-            console.error('Task list container not found:', { taskList });
-            document.getElementById('debug').textContent = 'Ошибка: Список задач не найден';
-            return;
+    calculateNextDueDate(dueDate, recurrence) {
+        if (!dueDate) return '';
+        const date = new Date(dueDate);
+        switch (recurrence) {
+            case 'daily':
+                date.setDate(date.getDate() + 1);
+                break;
+            case 'weekly':
+                date.setDate(date.getDate() + 7);
+                break;
+            case 'monthly':
+                date.setMonth(date.getMonth() + 1);
+                break;
         }
-        if (!completedContainer) {
-            console.error('Completed container not found:', { completedContainer });
-            document.getElementById('debug').textContent = 'Ошибка: Контейнер завершенных задач не найден';
-            return;
-        }
-        console.log('Rendering active tasks:', this.activeTasks);
-        console.log('Rendering completed tasks:', this.completedTasks);
-
-        taskList.innerHTML = `
-            <button class="add-task-btn" id="add-task-btn">Добавить задачу</button>
-            <div class="task-list-inner">
-                ${Array.isArray(this.activeTasks) && this.activeTasks.length ? this.activeTasks.map(task => `
-                    <div class="card task-card" data-id="${task.id}" draggable="true">
-                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked disabled' : ''}>
-                        <div class="task-content">
-                            <h3>${task.description}</h3>
-                            <small>Срок: ${task.dueDate ? task.dueDate : 'Не указан'} ${task.dueTime ? `в ${task.dueTime}` : ''}</small>
-                            <span class="priority priority-${task.priority}">Приоритет: ${this.translatePriority(task.priority)}</span>
-                            ${task.taskDescription ? `<p class="description">Описание: ${task.taskDescription}</p>` : ''}
-                            ${task.status ? `<p class="status">Статус: ${this.translateStatus(task.status)}</p>` : ''}
-                            ${task.assignee ? `<p class="assignee">Исполнитель: ${task.assignee}</p>` : ''}
-                            ${task.location ? `<p class="location">Площадка: ${task.location}</p>` : ''}
-                            ${task.tags.length ? `<p class="tags">Метки: ${task.tags.join(', ')}</p>` : ''}
-                        </div>
-                        <div class="delete-icon" data-id="${task.id}">&times;</div>
-                    </div>
-                `).join('') : '<p>Нет активных задач</p>'}
-            </div>
-        `;
-
-        completedContainer.innerHTML = `
-            <h4>Завершённые задачи</h4>
-            <div class="task-list-inner">
-                ${Array.isArray(this.completedTasks) && this.completedTasks.length ? this.completedTasks.map(task => `
-                    <div class="card task-card completed" data-id="${task.id}" draggable="true">
-                        <input type="checkbox" class="task-checkbox" checked disabled>
-                        <div class="task-content">
-                            <h3>${task.description}</h3>
-                            <small>Срок: ${task.dueDate ? task.dueDate : 'Не указан'} ${task.dueTime ? `в ${task.dueTime}` : ''}</small>
-                            <span class="priority priority-${task.priority}">Приоритет: ${this.translatePriority(task.priority)}</span>
-                            ${task.taskDescription ? `<p class="description">Описание: ${task.taskDescription}</p>` : ''}
-                            ${task.status ? `<p class="status">Статус: ${this.translateStatus(task.status)}</p>` : ''}
-                            ${task.assignee ? `<p class="assignee">Исполнитель: ${task.assignee}</p>` : ''}
-                            ${task.location ? `<p class="location">Площадка: ${task.location}</p>` : ''}
-                            ${task.tags.length ? `<p class="tags">Метки: ${task.tags.join(', ')}</p>` : ''}
-                        </div>
-                        <div class="delete-icon" data-id="${task.id}">&times;</div>
-                    </div>
-                `).join('') : '<p>Нет завершенных задач</p>'}
-            </div>
-        `;
-
-        this.bindEvents();
-        this.setupDragAndDrop();
+        return date.toISOString().split('T')[0];
     }
 
     translatePriority(priority) {
@@ -170,6 +134,83 @@ class TaskManager {
             case 'paused': return 'На паузе';
             default: return status;
         }
+    }
+
+    translateRecurrence(recurrence) {
+        switch (recurrence) {
+            case 'none': return 'Однократно';
+            case 'daily': return 'Ежедневно';
+            case 'weekly': return 'Еженедельно';
+            case 'monthly': return 'Ежемесячно';
+            default: return recurrence;
+        }
+    }
+
+    render() {
+        const taskList = document.getElementById('task-list');
+        const completedContainer = document.getElementById('completed');
+        if (!taskList) {
+            console.error('Task list container not found:', { taskList });
+            document.getElementById('debug').textContent = 'Ошибка: Список задач не найден';
+            return;
+        }
+        if (!completedContainer) {
+            console.error('Completed container not found:', { completedContainer });
+            document.getElementById('debug').textContent = 'Ошибка: Контейнер завершенных задач не найден';
+            return;
+        }
+        console.log('Rendering active tasks:', this.activeTasks);
+        console.log('Rendering completed tasks:', this.completedTasks);
+
+        const sortedActiveTasks = [...this.activeTasks].sort((a, b) => {
+            const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+            return priorityOrder[b.priority] - priorityOrder[a.priority];
+        });
+
+        taskList.innerHTML = `
+            <button class="add-task-btn" id="add-task-btn">Добавить задачу</button>
+            <div class="task-list-inner">
+                ${Array.isArray(sortedActiveTasks) && sortedActiveTasks.length ? sortedActiveTasks.map(task => `
+                    <div class="card task-card" data-id="${task.id}" draggable="true">
+                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked disabled' : ''}>
+                        <div class="task-content">
+                            <h3>${task.description}</h3>
+                            <small>Срок: ${task.dueDate ? task.dueDate : 'Не указан'} ${task.dueTime ? `в ${task.dueTime}` : ''}</small>
+                            <span class="priority priority-${task.priority}">Приоритет: ${this.translatePriority(task.priority)}</span>
+                            ${task.taskDescription ? `<p class="description">Описание: ${task.taskDescription}</p>` : ''}
+                            ${task.status ? `<p class="status">Статус: ${this.translateStatus(task.status)}</p>` : ''}
+                            ${task.assignee ? `<p class="assignee">Исполнитель: ${task.assignee}</p>` : ''}
+                            ${task.recurrence ? `<p class="recurrence">Периодичность: ${this.translateRecurrence(task.recurrence)}</p>` : ''}
+                        </div>
+                        <div class="delete-icon" data-id="${task.id}">×</div>
+                    </div>
+                `).join('') : '<p>Нет активных задач</p>'}
+            </div>
+        `;
+
+        completedContainer.innerHTML = `
+            <h4>Завершённые задачи</h4>
+            <div class="task-list-inner">
+                ${Array.isArray(this.completedTasks) && this.completedTasks.length ? this.completedTasks.map(task => `
+                    <div class="card task-card completed" data-id="${task.id}" draggable="true">
+                        <input type="checkbox" class="task-checkbox" checked disabled>
+                        <div class="task-content">
+                            <h3>${task.description}</h3>
+                            <small>Срок: ${task.dueDate ? task.dueDate : 'Не указан'} ${task.dueTime ? `в ${task.dueTime}` : ''}</small>
+                            <span class="priority priority-${task.priority}">Приоритет: ${this.translatePriority(task.priority)}</span>
+                            ${task.taskDescription ? `<p class="description">Описание: ${task.taskDescription}</p>` : ''}
+                            ${task.status ? `<p class="status">Статус: ${this.translateStatus(task.status)}</p>` : ''}
+                            ${task.assignee ? `<p class="assignee">Исполнитель: ${task.assignee}</p>` : ''}
+                            ${task.recurrence ? `<p class="recurrence">Периодичность: ${this.translateRecurrence(task.recurrence)}</p>` : ''}
+                        </div>
+                        <div class="delete-icon" data-id="${task.id}">×</div>
+                    </div>
+                `).join('') : '<p>Нет завершенных задач</p>'}
+            </div>
+        `;
+
+        this.bindEvents();
+        this.setupDragAndDrop();
     }
 
     bindEvents() {
